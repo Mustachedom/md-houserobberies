@@ -131,7 +131,7 @@ RegisterNetEvent('md-houserobbery:server:removeAdvancedLockpick', function()
     Player.Functions.RemoveItem('advancedlockpick', 1)
 end)
 
-RegisterNetEvent('md-houserobbery:server:removeLockpick', function()
+RegisterNetEvent('md-houserobbery:server:removeLockpick', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
 
     if not Player then return end
@@ -148,9 +148,9 @@ QBCore.Functions.CreateUseableItem("houselaptop", function(source)
 end)
 
 
-RegisterNetEvent('md-houserobbery:server:removehousehacking', function()
+RegisterNetEvent('md-houserobbery:server:removehousehacking', function(source)
     local Player = QBCore.Functions.GetPlayer(source)
-
+    local src = source
    if Player.Functions.RemoveItem('houselaptop', 1) then
 		TriggerClientEvent('QBCore:Notify', src, "You Lost Your House Hacking Laptop", 'error')
 	end
@@ -167,7 +167,7 @@ end)
 
 RegisterNetEvent('md-houserobbery:server:removemansionhacking', function()
     local Player = QBCore.Functions.GetPlayer(source)
-
+    local src = source
    if Player.Functions.RemoveItem('mansionlaptop', 1) then
 		TriggerClientEvent('QBCore:Notify', src, "You Lost Your Mansion Hacking Laptop", 'error')
 	end
