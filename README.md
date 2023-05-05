@@ -28,3 +28,6 @@ step 5
 ``` 
 add your police alerts to line 152
 ```
+
+
+if you need support open a ticket here. I can't keep up with dm's https://discord.gg/SJVPmh9kzB
