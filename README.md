@@ -14,7 +14,7 @@ download dependancies
 
 step 3 
 ```
-add these items
+add these items and upload images 
 
 ["houselaptop"] 		 	 	 = {["name"] = "houselaptop",        		   	["label"] = "House Hacking Laptop",	 				["weight"] = 2500, 		["type"] = "item", 		["image"] = "houselaptop.png", 			["unique"] = false, 		["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = ""},
 ["mansionlaptop"] 		 	 	 = {["name"] = "mansionlaptop",        		   	["label"] = "Mansion Hacking Laptop",	 				["weight"] = 2500, 		["type"] = "item", 		["image"] = "mansionlaptop.png", 			["unique"] = false, 		["useable"] = true, 	["shouldClose"] = true,   	["combinable"] = nil,   ["description"] = ""},
