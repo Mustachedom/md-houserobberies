@@ -10,6 +10,7 @@ download dependancies
 1) ps-ui https://github.com/Project-Sloth/ps-ui
 2) - qb-lockpick: https://github.com/qbcore-framework/qb-lockpick
 3) - qb-skillbar: https://github.com/qbcore-framework/qb-skillbar
+4) Huge shoutout to k4mb1 for these! Give them all y'alls love! https://forum.cfx.re/t/free-props-starter-shells-for-housing-scripts/4826922
 ```
 
 step 3 
