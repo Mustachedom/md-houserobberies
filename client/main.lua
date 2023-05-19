@@ -292,31 +292,32 @@ end)
 
 RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
 local hours = GetClockHours()
- if hours >= Config.MinimumTime or hours <= Config.MaximumTime then
-	if Config.Houses[closestHouse]["tier"] == 1 or Config.Houses[closestHouse]["tier"] == 2 or Config.Houses[closestHouse]["tier"] == 3 or Config.Houses[closestHouse]["tier"] == 4 then
-		usingAdvanced = isAdvanced
-		if usingAdvanced then
-			if closestHouse ~= nil then
-				if CurrentCops >= Config.MinimumHouseRobberyPolice then
-					if not Config.Houses[closestHouse]["opened"] then
-							PoliceCall()
-							TriggerEvent('qb-lockpick:client:openLockpick', lockpickFinish)
-							if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
-							local pos = GetEntityCoords(PlayerPedId())
-							TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-							end
-					else
-						QBCore.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
-					end
-				else
-					QBCore.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
-				end
-			end
-		end
-	else
-	QBCore.Functions.Notify("They Have A Better Security System Here", "error", 3500)
-	end
-end	
+    if hours >= Config.MinimumTime or hours <= Config.MaximumTime then
+        usingAdvanced = isAdvanced
+        if usingAdvanced then
+            if closestHouse ~= nil then
+                if Config.Houses[closestHouse]["tier"] == 1 or Config.Houses[closestHouse]["tier"] == 2 or Config.Houses[closestHouse]["tier"] == 3 or Config.Houses[closestHouse]["tier"] == 4 then
+                    if CurrentCops >= Config.MinimumHouseRobberyPolice then
+                        if not Config.Houses[closestHouse]["opened"] then
+                                PoliceCall()
+                                TriggerEvent('qb-lockpick:client:openLockpick', lockpickFinish)
+                                if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
+                                local pos = GetEntityCoords(PlayerPedId())
+                                TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
+                                end
+                        else
+                            QBCore.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
+                        end
+                    else
+                        QBCore.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
+                    end
+                else
+                QBCore.Functions.Notify("They Have A Better Security System Here", "error", 3500)    
+                end
+            end    
+        end
+    
+    end    
 end)
 
 RegisterNetEvent('md-houserobbery:client:househacking', function()
