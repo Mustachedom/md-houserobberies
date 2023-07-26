@@ -58,7 +58,7 @@ local function enterRobberyHouse(house, JobInfo)
     TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
     openHouseAnim()
     Wait(250)
-    local coords = { x = Config.Houses[house]["coords"]["x"], y = Config.Houses[house]["coords"]["y"], z = Config.Houses[house]["coords"]["z"] - Config.MinZOffset}
+    local coords = { x = Config.Houses[house]["coords"].x, y = Config.Houses[house]["coords"].y, z = Config.Houses[house]["coords"].z - Config.MinZOffset}
     if Config.Houses[house]["tier"] == 1 then
         data = exports['qb-interior']:CreateCaravanShell(coords)
 	end
