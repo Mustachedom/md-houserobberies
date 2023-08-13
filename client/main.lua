@@ -575,5 +575,4 @@ RegisterCommand('gethroffset', function()
         print('Z: '..zdist)
     end
 end)
-end) 
 
