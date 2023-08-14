@@ -428,7 +428,7 @@ CreateThread(function()
                                             enterRobberyHouse(k)
                                         end
                                     else
-                                        if PlayerJob and PlayerJob.name == 'police' then
+                                        if PlayerJob and PlayerJob.name == 'police' and Config.PoliceLockDoors == true then
                                             DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock")
                                             if IsControlJustPressed(0, 49) then
                                                 TriggerEvent('lockDoor', k)
@@ -457,7 +457,7 @@ CreateThread(function()
                                             enterRobberyHouse(k)
                                         end
                                     else
-                                        if PlayerJob and PlayerJob.name == 'police' then
+                                        if PlayerJob and PlayerJob.name == 'police' and Config.PoliceLockDoors == true then
                                             DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock")
                                             if IsControlJustPressed(0, 49) then
                                                 TriggerEvent('lockDoor', k)
@@ -486,7 +486,7 @@ CreateThread(function()
                                             enterRobberyHouse(k)
                                         end
                                     else
-                                        if PlayerJob and PlayerJob.name == 'police' then
+                                        if PlayerJob and PlayerJob.name == 'police' and Config.PoliceLockDoors == true then
                                             DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock")
                                             if IsControlJustPressed(0, 49) then
                                                 TriggerEvent('lockDoor', k)

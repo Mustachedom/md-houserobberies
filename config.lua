@@ -10,6 +10,7 @@ Config.weapononechance = 80  -- % chance to have weapon one
 Config.Weaponone = "weapon_pistol"
 Config.Weapontwo = "weapon_bullpupshotgun"
 Config.ShowItems = true -- shows players they are at a house and what items they need
+Config.PoliceLockDoors = true -- allows police to lock doors of houses
 
 Config.Rewards = {
     [1] = {
