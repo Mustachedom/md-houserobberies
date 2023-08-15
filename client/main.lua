@@ -423,23 +423,25 @@ CreateThread(function()
 								inRange = true
 								if CurrentCops >= Config.MinimumHouseRobberyPolice then
 									if Config.Houses[k]["opened"] then
-                                        DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
-                                        if IsControlJustPressed(0, 38) then
-                                            enterRobberyHouse(k)
-                                        end
-                                    else
                                         if PlayerJob and PlayerJob.name == 'police' and Config.PoliceLockDoors == true then
-                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock")
+                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock Press [E] to enter")
                                             if IsControlJustPressed(0, 49) then
                                                 TriggerEvent('lockDoor', k)
                                                 QBCore.Functions.Notify(Config.Houses[k]["opened"] and "Door unlocked!" or "Door locked!", "info", 3500)
+                                            elseif IsControlJustPressed(0, 38) then
+                                                enterRobberyHouse(k)
                                             end
-                                        else
-                                            if Config.ShowItems == true then
-                                                if not requiredItemsShowed then
-                                                    requiredItemsShowed = true
-                                                    TriggerEvent('inventory:client:requiredItems', requiredItems, true)
-                                                end
+                                        else 
+                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
+                                            if IsControlJustPressed(0, 38) then
+                                                enterRobberyHouse(k)
+                                            end
+                                        end
+                                    else
+                                        if Config.ShowItems == true then
+                                            if not requiredItemsShowed then
+                                                requiredItemsShowed = true
+                                                TriggerEvent('inventory:client:requiredItems', requiredItems, true)
                                             end
                                         end
                                     end
@@ -452,23 +454,25 @@ CreateThread(function()
 								inRange = true
 								if CurrentCops >= Config.MinimumHouseRobberyPolice then
 									if Config.Houses[k]["opened"] then
-                                        DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
-                                        if IsControlJustPressed(0, 38) then
-                                            enterRobberyHouse(k)
-                                        end
-                                    else
                                         if PlayerJob and PlayerJob.name == 'police' and Config.PoliceLockDoors == true then
-                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock")
+                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock Press [E] to enter")
                                             if IsControlJustPressed(0, 49) then
                                                 TriggerEvent('lockDoor', k)
                                                 QBCore.Functions.Notify(Config.Houses[k]["opened"] and "Door unlocked!" or "Door locked!", "info", 3500)
+                                            elseif IsControlJustPressed(0, 38) then
+                                                enterRobberyHouse(k)
                                             end
-                                        else
-                                            if Config.ShowItems == true then
-                                                if not requiredItemsShowed then
-                                                    requiredItemsShowed = true
-                                                    TriggerEvent('inventory:client:requiredItems', requiredItems2, true)
-                                                end
+                                        else 
+                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
+                                            if IsControlJustPressed(0, 38) then
+                                                enterRobberyHouse(k)
+                                            end
+                                        end
+                                    else
+                                        if Config.ShowItems == true then
+                                            if not requiredItemsShowed then
+                                                requiredItemsShowed = true
+                                                TriggerEvent('inventory:client:requiredItems', requiredItems, true)
                                             end
                                         end
                                     end
@@ -481,23 +485,25 @@ CreateThread(function()
 								inRange = true
 								if CurrentCops >= Config.MinimumHouseRobberyPolice then
 									if Config.Houses[k]["opened"] then
-                                        DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
-                                        if IsControlJustPressed(0, 38) then
-                                            enterRobberyHouse(k)
-                                        end
-                                    else
                                         if PlayerJob and PlayerJob.name == 'police' and Config.PoliceLockDoors == true then
-                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock")
+                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], "Press [F] to lock/unlock Press [E] to enter")
                                             if IsControlJustPressed(0, 49) then
                                                 TriggerEvent('lockDoor', k)
                                                 QBCore.Functions.Notify(Config.Houses[k]["opened"] and "Door unlocked!" or "Door locked!", "info", 3500)
+                                            elseif IsControlJustPressed(0, 38) then
+                                                enterRobberyHouse(k)
                                             end
-                                        else
-                                            if Config.ShowItems == true then
-                                                if not requiredItemsShowed then
-                                                    requiredItemsShowed = true
-                                                    TriggerEvent('inventory:client:requiredItems', requiredItems3, true)
-                                                end
+                                        else 
+                                            DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
+                                            if IsControlJustPressed(0, 38) then
+                                                enterRobberyHouse(k)
+                                            end
+                                        end
+                                    else
+                                        if Config.ShowItems == true then
+                                            if not requiredItemsShowed then
+                                                requiredItemsShowed = true
+                                                TriggerEvent('inventory:client:requiredItems', requiredItems, true)
                                             end
                                         end
                                     end
