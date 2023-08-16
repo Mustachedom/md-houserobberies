@@ -44,7 +44,6 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PlayerJob = QBCore.Functions.GetPlayerData().job
 
     if PlayerJob.name == "police" then
-      
     end
 end)
 
@@ -85,12 +84,12 @@ local function enterRobberyHouse(house, JobInfo)
     currentHouse = house
     Wait(500)
     TriggerEvent('qb-weathersync:client:DisableSync')
-	if QBCore.Functions.GetPlayerData().job.name == "police"  then 
-		QBCore.Functions.Notify("Be Careful. There may be someone here", "success") 
+	if QBCore.Functions.GetPlayerData().job.name == "police"  then
+		QBCore.Functions.Notify("Be Careful. There may be someone here", "success")
 	else
 		local chance = math.random(1,100)
 		local weapchance = math.random(1,100)
-		if chance <= Config.pedspawnchance then 
+		if chance <= Config.pedspawnchance then
 			local current = Config.Ped
 			RequestModel(current)
 			while not HasModelLoaded(current) do
@@ -114,15 +113,13 @@ local function enterRobberyHouse(house, JobInfo)
 				GiveWeaponToPed(homeowner, Config.Weaponone, 1, false, true)
 				TaskCombatPed(homeowner, PlayerPedId(), 0, 16)
 				SetPedCombatAttributes(homeowner, 46, true)
-			else 
+			else
 				GiveWeaponToPed(homeowner, Config.Weapontwo, 1, false, true)
 				TaskCombatPed(homeowner, PlayerPedId(), 0, 16)
 				SetPedCombatAttributes(homeowner, 46, true)
-			end 
-			
+			end
 		end
 	end
-	
 end
 
 
@@ -154,7 +151,7 @@ local function PoliceCall()
     end
 end
 
-local function lockpickFinish(success) 
+local function lockpickFinish(success)
 	if success then
 		TriggerServerEvent('md-houserobbery:server:enterHouse', closestHouse)
 		QBCore.Functions.Notify(Lang:t("success.worked"), "success", 2500)
@@ -313,12 +310,11 @@ local hours = GetClockHours()
                         QBCore.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
                     end
                 else
-                QBCore.Functions.Notify("They Have A Better Security System Here", "error", 3500)    
+                QBCore.Functions.Notify("They Have A Better Security System Here", "error", 3500)
                 end
-            end    
+            end
         end
-    
-    end    
+    end
 end)
 
 RegisterNetEvent('md-houserobbery:client:househacking', function()
@@ -431,7 +427,7 @@ CreateThread(function()
                                             elseif IsControlJustPressed(0, 38) then
                                                 enterRobberyHouse(k)
                                             end
-                                        else 
+                                        else
                                             DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
                                             if IsControlJustPressed(0, 38) then
                                                 enterRobberyHouse(k)
@@ -462,7 +458,7 @@ CreateThread(function()
                                             elseif IsControlJustPressed(0, 38) then
                                                 enterRobberyHouse(k)
                                             end
-                                        else 
+                                        else
                                             DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
                                             if IsControlJustPressed(0, 38) then
                                                 enterRobberyHouse(k)
@@ -493,7 +489,7 @@ CreateThread(function()
                                             elseif IsControlJustPressed(0, 38) then
                                                 enterRobberyHouse(k)
                                             end
-                                        else 
+                                        else
                                             DrawText3Ds(Config.Houses[k]["coords"]["x"], Config.Houses[k]["coords"]["y"], Config.Houses[k]["coords"]["z"], '~g~E~w~ - To Enter')
                                             if IsControlJustPressed(0, 38) then
                                                 enterRobberyHouse(k)
