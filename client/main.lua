@@ -323,32 +323,36 @@ end)
 RegisterNetEvent('md-houserobbery:client:househacking', function()
 local hours = GetClockHours()
 if hours >= Config.MinimumTime or hours <= Config.MaximumTime then
-	if Config.Houses[closestHouse]["tier"] == 5 then
-		exports['ps-ui']:VarHack(function(success)
-		if success then
-			if closestHouse ~= nil then
-				if CurrentCops >= Config.MinimumHouseRobberyPolice then
-					if not Config.Houses[closestHouse]["opened"] then
-							PoliceCall()
-							TriggerServerEvent('md-houserobbery:server:enterHouse', closestHouse)
-							TriggerServerEvent('md-houserobbery:server:removehousehacking')
-							if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
-							local pos = GetEntityCoords(PlayerPedId())
-							TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
-							end
+	if closestHouse ~= nil then
+		if Config.Houses[closestHouse]["tier"] == 5 then
+			exports['ps-ui']:VarHack(function(success)
+				if success then
+					if CurrentCops >= Config.MinimumHouseRobberyPolice then
+						if not Config.Houses[closestHouse]["opened"] then
+								PoliceCall()
+								TriggerServerEvent('md-houserobbery:server:enterHouse', closestHouse)
+								TriggerServerEvent('md-houserobbery:server:removehousehacking')
+								if math.random(1, 100) <= 85 and not IsWearingHandshoes() then
+									local pos = GetEntityCoords(PlayerPedId())
+									TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
+								end
+						else
+							QBCore.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
+						end
 					else
-						QBCore.Functions.Notify(Lang:t("error.door_open"), "error", 3500)
+						QBCore.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
 					end
-				else
-					QBCore.Functions.Notify(Lang:t("error.not_enough_police"), "error", 3500)
+			else
+				if math.random(1,100) <= 15 then
+					TriggerServerEvent('md-houserobbery:server:removehousehacking')
 				end
 			end
-		else
-			if math.random(1,100) <= 15 then
-				TriggerServerEvent('md-houserobbery:server:removehousehacking')
-			end
+			end, 3, 6)
+		elseif Config.Houses[closestHouse]["tier"] == 6 or Config.Houses[closestHouse]["tier"] == 4 or Config.Houses[closestHouse]["tier"] == 3 or Config.Houses[closestHouse]["tier"] == 2 or Config.Houses[closestHouse]["tier"] == 1  or closestHouse == nil then 
+			QBCore.Functions.Notify("cant use here", "error", 3500)
 		end
-		end, 3, 6)
+	elseif closestHouse == nil then
+	QBCore.Functions.Notify("cant use here", "error", 3500)
 	end
 end	
 end)
