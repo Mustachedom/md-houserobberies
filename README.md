@@ -24,7 +24,7 @@
 ## How to install like a boss
 **step 1**
 
-- replace qb-houserobbery
+- delete qb-houserobbery
 
 **step 2**
 
