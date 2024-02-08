@@ -241,6 +241,12 @@ end)
 CreateThread(function()
     for k, v in pairs (Config.Houses) do
         if Config.OxTarget then
+            local labeltext = " "
+            if Config.DebugHouseNumber then
+                labeltext = "break in " .. k .."!"
+            else
+                labeltext = "Break In"    
+            end
             robberyhouse = exports.ox_target:addBoxZone({
                 coords = v.coords,
                 size = vec(1,1,3),
