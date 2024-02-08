@@ -102,7 +102,7 @@ local function enterRobberyHouse(house)
             FreezeEntityPosition(k,true)
             TriggerEvent('md-houserobbery:client:deleteobject', k)
             exports['qb-target']:AddTargetEntity(k, { -- 963.37, -2122.95, 31.47
-	        debugPoly = true,
+	        debugPoly = false,
 		    options = {
 				{
 					name = 'StealLoot',
@@ -245,7 +245,7 @@ CreateThread(function()
                 coords = v.coords,
                 size = vec(1,1,3),
                 rotation = 0,
-                debug = true,
+                debug = false,
                 options = {
             {
                 name = 'renterhouse',
@@ -370,7 +370,7 @@ CreateThread(function()
                 coords = v.insidecoords,
                 size = vec(1,1,3),
                 rotation = 0,
-                debug = true,
+                debug = false,
                 options = {
                     {
                         name = 'leaverobbery',
