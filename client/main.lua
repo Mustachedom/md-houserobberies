@@ -240,157 +240,305 @@ end)
 
 CreateThread(function()
     for k, v in pairs (Config.Houses) do
-        local labeltext = " "
-        if Config.DebugHouseNumber then
-            labeltext = "break in " .. k .."!"
-        else
-            labeltext = "Break In"    
-        end
-        exports['qb-target']:AddBoxZone("enterrobbery"..k, v.coords,1.5, 1.75, {
-        }, {
-        options = {
-        {
-            name = 'renterhouse',
-            icon = "fas fa-sign-in-alt",
-            label = "Re-Enter House",
-            action = function()
-                enterRobberyHouse(k)
-            end,
-            canInteract = function()
-                if Config.Houses[k]['spawned'] then return true end end
-        },
-        {
-            name = 'makesmoke',
-            icon = "fas fa-sign-in-alt",
-            label = "Throw Smoke Grenade",
-            item = "weapon_smokegrenade",
-            action = function()
-                TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
-                QBCore.Functions.Progressbar("drink_something", "Throwing A Smoke Grenade", 4000, false, true, {
-                    disableMovement = true,
-                    disableCarMovement = false,
-                    disableMouse = false,
-                    disableCombat = true,
-                    disableInventory = true,
-                }, {}, {}, {}, function()
-                    dict = "scr_ba_bb"
-                    loadParticle(dict)
-                    smoke = StartParticleFxLoopedAtCoord('scr_ba_bb_plane_smoke_trail',Config.Houses[k].coords.x, Config.Houses[k].coords.y, Config.Houses[k].coords.z-45.0, 0, 0, 0, 3.0, 0, 0,0)
-                    SetParticleFxLoopedAlpha(smoke, 1.0)
-                    Wait(20000)
-                    StopParticleFxLooped(smoke,true)
-                end)
-            end,
-            canInteract = function()
-                if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
-            end
-        },
-        {
-            name = 'lockup',
-            icon = "fas fa-sign-in-alt",
-            label = "Lock The House Down",
-            action = function()
-                TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
-                QBCore.Functions.Progressbar("drink_something", "Locking Up The House", math.random(3000,6000), false, true, {
-                    disableMovement = true,
-                    disableCarMovement = false,
-                    disableMouse = false,
-                    disableCombat = true,
-                    disableInventory = true,
-                }, {}, {}, {}, function()
-                TriggerServerEvent('md-houserobbery:server:closeHouse', k)
-                end)
-            end,
-            canInteract = function()
-                if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
-            end
-        },
-        {
-            name = 'LockPickHouse',
-            icon = "fas fa-sign-in-alt",
-            label = labeltext,
-            action = function()
-                if Config.Houses[k]['tier'] <= 4  then
-                    if QBCore.Functions.HasItem('lockpick') then
-                        exports['ps-ui']:Circle(function(success)
-                            if success then
-                                TriggerServerEvent('md-houserobbery:server:enterHouse', k)
-                                if 20 <= math.random(1,100) then
-                                    TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
-                                    PoliceCall()
-                                end
-                            else
-                                QBCore.Functions.Notify("Its Just A Circle It Isnt Hard","error")
-                            end
-                        end,2, 15)
-                    else
-                        QBCore.Functions.Notify("You Need A Lock Pick To Do This","error")
-                    end
-                elseif Config.Houses[k]['tier'] == 5 then
-                    if QBCore.Functions.HasItem('houselaptop') then
-                        exports['ps-ui']:VarHack(function(success)
-                            if success then
-                                TriggerServerEvent('md-houserobbery:server:enterHouse', k)
-                                if 20 <= math.random(1,100) then
-                                    TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
-                                    PoliceCall()
-                                end
-                            else
-                                TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] )
-                                QBCore.Functions.Notify("Its Just Some Numbers In Order It Isnt Hard","error")
-                            end
-                        end,5, 8)
-                    else
-                        QBCore.Functions.Notify("You Need A House Laptop","error")
-                    end
-                elseif Config.Houses[k]['tier'] == 6 then
-                    if QBCore.Functions.HasItem('mansionlaptop') then
-                        exports['ps-ui']:Scrambler(function(success)
-                            if success then
-                              TriggerServerEvent('md-houserobbery:server:enterHouse', k)
-                                if 20 <= math.random(1,100) then
-                                    TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
-                                    PoliceCall()
-                                end
-                            else
-                                TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] )
-                                QBCore.Functions.Notify("Yeah This One Is Hard","error")
-                            end
-                        end,"numeric", 15, 0)
-                    else
-                        QBCore.Functions.Notify("You Need A Mansion Laptop","error")
-                    end
+        if Config.OxTarget then
+            robberyhouse = exports.ox_target:addBoxZone({
+                coords = v.coords,
+                size = vec(1,1,3),
+                rotation = 0,
+                debug = true,
+                options = {
+            {
+                name = 'renterhouse',
+                icon = "fas fa-sign-in-alt",
+                label = "Re-Enter House",
+                onSelect = function()
+                    enterRobberyHouse(k)
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] then return true end end
+            },
+            {
+                name = 'makesmoke',
+                icon = "fas fa-sign-in-alt",
+                label = "Throw Smoke Grenade",
+             --   item = "weapon_smokegrenade",
+                onSelect = function()
+                    TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
+                    QBCore.Functions.Progressbar("drink_something", "Throwing A Smoke Grenade", 4000, false, true, {
+                        disableMovement = true,
+                        disableCarMovement = false,
+                        disableMouse = false,
+                        disableCombat = true,
+                        disableInventory = true,
+                    }, {}, {}, {}, function()
+                        dict = "scr_ba_bb"
+                        loadParticle(dict)
+                        smoke = StartParticleFxLoopedAtCoord('scr_ba_bb_plane_smoke_trail',Config.Houses[k].coords.x, Config.Houses[k].coords.y, Config.Houses[k].coords.z-45.0, 0, 0, 0, 3.0, 0, 0,0)
+                        SetParticleFxLoopedAlpha(smoke, 1.0)
+                        Wait(20000)
+                        StopParticleFxLooped(smoke,true)
+                    end)
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
                 end
+            },
+            {
+                name = 'lockup',
+                icon = "fas fa-sign-in-alt",
+                label = "Lock The House Down",
+                onSelect = function()
+                    TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
+                    QBCore.Functions.Progressbar("drink_something", "Locking Up The House", math.random(3000,6000), false, true, {
+                        disableMovement = true,
+                        disableCarMovement = false,
+                        disableMouse = false,
+                        disableCombat = true,
+                        disableInventory = true,
+                    }, {}, {}, {}, function()
+                    TriggerServerEvent('md-houserobbery:server:closeHouse', k)
+                    end)
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                end
+            },
+            {
+                name = 'LockPickHouse',
+                icon = "fas fa-sign-in-alt",
+                label = labeltext,
+                onSelect = function()
+                    if Config.Houses[k]['tier'] <= 4  then
+                        if QBCore.Functions.HasItem('lockpick') then
+                            exports['ps-ui']:Circle(function(success)
+                                if success then
+                                    TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    if 20 <= math.random(1,100) then
+                                        TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
+                                        PoliceCall()
+                                    end
+                                else
+                                    QBCore.Functions.Notify("Its Just A Circle It Isnt Hard","error")
+                                end
+                            end,2, 15)
+                        else
+                            QBCore.Functions.Notify("You Need A Lock Pick To Do This","error")
+                        end
+                    elseif Config.Houses[k]['tier'] == 5 then
+                        if QBCore.Functions.HasItem('houselaptop') then
+                            exports['ps-ui']:VarHack(function(success)
+                                if success then
+                                    TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    if 20 <= math.random(1,100) then
+                                        TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
+                                        PoliceCall()
+                                    end
+                                else
+                                    TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] )
+                                    QBCore.Functions.Notify("Its Just Some Numbers In Order It Isnt Hard","error")
+                                end
+                            end,5, 8)
+                        else
+                            QBCore.Functions.Notify("You Need A House Laptop","error")
+                        end
+                    elseif Config.Houses[k]['tier'] == 6 then
+                        if QBCore.Functions.HasItem('mansionlaptop') then
+                            exports['ps-ui']:Scrambler(function(success)
+                                if success then
+                                  TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    if 20 <= math.random(1,100) then
+                                        TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
+                                        PoliceCall()
+                                    end
+                                else
+                                    TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] )
+                                    QBCore.Functions.Notify("Yeah This One Is Hard","error")
+                                end
+                            end,"numeric", 15, 0)
+                        else
+                            QBCore.Functions.Notify("You Need A Mansion Laptop","error")
+                        end
+                    end
 
-            end,
-            canInteract = function()
-                if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
-        }
-    },
-    distance = 2.0  
-})        
-exports['qb-target']:AddBoxZone("leaverobbery"..k, v.insidecoords,1.5, 1.75, {
-    name = "leaverobbery"..k,
-    heading = 0.0,
-    debugPoly = false,
-    minZ = v.insidecoords.z-2,
-    maxZ = v.insidecoords.z+2,
-    }, {
-    options = {
-        {
-            name = 'leaverobbery',
-            icon = "fas fa-sign-in-alt",
-            label = "Leave Robbery House",
-            action = function()
-                SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
-                inside = false
-                currentHouse = nil
-            end,
-        
-        },
-    },
-    distance = 2.0
-    }) 
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
+            }
+         },
+        })        
+            leavehouserobbery = exports.ox_target:addBoxZone({
+                coords = v,
+                size = vec(1,1,3),
+                rotation = 0,
+                debug = true,
+                options = {
+                    {
+                        name = 'leaverobbery',
+                        icon = "fas fa-sign-in-alt",
+                        label = "Leave Robbery House",
+                        onSelect = function()
+                            SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
+                            inside = false
+                            currentHouse = nil
+                        end,
+                    
+                    },
+                },
+                distance = 2.0
+                })
+        else
+            local labeltext = " "
+            if Config.DebugHouseNumber then
+                labeltext = "break in " .. k .."!"
+            else
+                labeltext = "Break In"    
+            end
+            exports['qb-target']:AddBoxZone("enterrobbery"..k, v.coords,1.5, 1.75, {
+            }, {
+            options = {
+            {
+                name = 'renterhouse',
+                icon = "fas fa-sign-in-alt",
+                label = "Re-Enter House",
+                action = function()
+                    enterRobberyHouse(k)
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] then return true end end
+            },
+            {
+                name = 'makesmoke',
+                icon = "fas fa-sign-in-alt",
+                label = "Throw Smoke Grenade",
+               -- item = "weapon_smokegrenade",
+                action = function()
+                    TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
+                    QBCore.Functions.Progressbar("drink_something", "Throwing A Smoke Grenade", 4000, false, true, {
+                        disableMovement = true,
+                        disableCarMovement = false,
+                        disableMouse = false,
+                        disableCombat = true,
+                        disableInventory = true,
+                    }, {}, {}, {}, function()
+                        dict = "scr_ba_bb"
+                        loadParticle(dict)
+                        smoke = StartParticleFxLoopedAtCoord('scr_ba_bb_plane_smoke_trail',Config.Houses[k].coords.x, Config.Houses[k].coords.y, Config.Houses[k].coords.z-45.0, 0, 0, 0, 3.0, 0, 0,0)
+                        SetParticleFxLoopedAlpha(smoke, 1.0)
+                        Wait(20000)
+                        StopParticleFxLooped(smoke,true)
+                    end)
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                end
+            },
+            {
+                name = 'lockup',
+                icon = "fas fa-sign-in-alt",
+                label = "Lock The House Down",
+                action = function()
+                    TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
+                    QBCore.Functions.Progressbar("drink_something", "Locking Up The House", math.random(3000,6000), false, true, {
+                        disableMovement = true,
+                        disableCarMovement = false,
+                        disableMouse = false,
+                        disableCombat = true,
+                        disableInventory = true,
+                    }, {}, {}, {}, function()
+                    TriggerServerEvent('md-houserobbery:server:closeHouse', k)
+                    end)
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                end
+            },
+            {
+                name = 'LockPickHouse',
+                icon = "fas fa-sign-in-alt",
+                label = labeltext,
+                action = function()
+                    if Config.Houses[k]['tier'] <= 4  then
+                        if QBCore.Functions.HasItem('lockpick') then
+                            exports['ps-ui']:Circle(function(success)
+                                if success then
+                                    TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    if 20 <= math.random(1,100) then
+                                        TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
+                                        PoliceCall()
+                                    end
+                                else
+                                    QBCore.Functions.Notify("Its Just A Circle It Isnt Hard","error")
+                                end
+                            end,2, 15)
+                        else
+                            QBCore.Functions.Notify("You Need A Lock Pick To Do This","error")
+                        end
+                    elseif Config.Houses[k]['tier'] == 5 then
+                        if QBCore.Functions.HasItem('houselaptop') then
+                            exports['ps-ui']:VarHack(function(success)
+                                if success then
+                                    TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    if 20 <= math.random(1,100) then
+                                        TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
+                                        PoliceCall()
+                                    end
+                                else
+                                    TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] )
+                                    QBCore.Functions.Notify("Its Just Some Numbers In Order It Isnt Hard","error")
+                                end
+                            end,5, 8)
+                        else
+                            QBCore.Functions.Notify("You Need A House Laptop","error")
+                        end
+                    elseif Config.Houses[k]['tier'] == 6 then
+                        if QBCore.Functions.HasItem('mansionlaptop') then
+                            exports['ps-ui']:Scrambler(function(success)
+                                if success then
+                                  TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    if 20 <= math.random(1,100) then
+                                        TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
+                                        PoliceCall()
+                                    end
+                                else
+                                    TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] )
+                                    QBCore.Functions.Notify("Yeah This One Is Hard","error")
+                                end
+                            end,"numeric", 15, 0)
+                        else
+                            QBCore.Functions.Notify("You Need A Mansion Laptop","error")
+                        end
+                    end
+
+                end,
+                canInteract = function()
+                    if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
+            }
+         },
+            distance = 2.0  
+            })        
+            exports['qb-target']:AddBoxZone("leaverobbery"..k, v.insidecoords,1.5, 1.75, {
+                name = "leaverobbery"..k,
+                heading = 0.0,
+                debugPoly = false,
+                minZ = v.insidecoords.z-2,
+                maxZ = v.insidecoords.z+2,
+                }, {
+                options = {
+                    {
+                        name = 'leaverobbery',
+                        icon = "fas fa-sign-in-alt",
+                        label = "Leave Robbery House",
+                        action = function()
+                            SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
+                            inside = false
+                            currentHouse = nil
+                        end,
+                    
+                    },
+                },
+                distance = 2.0
+                })
+    end         
 end
 end)
 
