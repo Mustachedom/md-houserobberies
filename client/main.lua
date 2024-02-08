@@ -367,7 +367,7 @@ CreateThread(function()
          },
         })        
             leavehouserobbery = exports.ox_target:addBoxZone({
-                coords = v.coords,
+                coords = v.insidecoords,
                 size = vec(1,1,3),
                 rotation = 0,
                 debug = true,
