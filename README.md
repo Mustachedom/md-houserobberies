@@ -16,7 +16,7 @@
 
 - [k4mb1 free shells](https://forum.cfx.re/t/free-props-starter-shells-for-housing-scripts/4826922)
 
--[ability to read a readme](https://www.hookedonphonics.com/)
+- [ability to read a readme](https://www.hookedonphonics.com/)
 
 ## How to install like a boss
 **step 1**
@@ -66,4 +66,3 @@
 	
 
 
-![](https://cdn.discordapp.com/attachments/1164709522691076120/1185704378083069983/image.png?ex=65909441&is=657e1f41&hm=5a74fe8c6cf4534e46c22b287b215223af000747e4ba3d60e7714ab7d2bb9baa&)
