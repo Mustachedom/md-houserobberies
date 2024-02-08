@@ -20,7 +20,7 @@ Config.Inventoryimagelink = "ps-inventory/html/images/" -- the filepath to where
 Config.FenceSpawn = vector4(1552.11, 3603.45, 38.78, 231.85) -- where the fence ped spawns
 Config.FenceWeaponone = "weapon_bullpupshotgun" -- what weapon the fence gets when you assault him
 Config.FenceWeapontwo = "weapon_rpg"-- what weapon the fence gets when you assault him
-
+Config.Oxtarget = true
 Config.Rewards = { -- the numbers in boxes translate to which tier of house and their loot. 1 = tier 1,  2 = tier 2, if that doesnt make sense hire a dev
     [1] = {
         cabinet = 	 {"bandage", "diamond_ring", "goldchain", "weed_skunk", "thermite", "cryptostick"},
