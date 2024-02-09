@@ -93,8 +93,9 @@ local function enterRobberyHouse(house)
     end
     for k, v in pairs(Config.Houses[house]['loot']) do
         lib.requestModel(v.prop, 10000)
-        if v.taken == false then 
-            k = CreateObject(v.prop, coords.x + v.coords.x, coords.y + v.coords.y, coords.z + v.coords.z, false, false, false)
+        if v.taken == false then
+            local objectCoords = vector3(coords.x + v.coords.x, coords.y + v.coords.y, coords.z + v.coords.z)
+            k = CreateObject(v.prop, objectCoords.x, objectCoords.y, objectCoords.z, false, false, false)
             if v.rotation == nil then
                 v.rotation = 180.0
             end
@@ -122,7 +123,7 @@ local function enterRobberyHouse(house)
                                     ClearPedTasks(PlayerPedId())
 						            DeleteObject(k)
                                     TriggerServerEvent('md-houserobbery:server:setlootused', house, v.num)
-                                    TriggerServerEvent('md-houserobbery:server:GetLoot', Config.Houses[house].tier, v.type)
+                                    TriggerServerEvent('md-houserobbery:server:GetLoot', Config.Houses[house].tier, v.type, objectCoords)
                                 else
                                    QBCore.Functions.Notify("Dude You Cant Even Do This, C'mon", "error")
                                 end
@@ -622,7 +623,7 @@ RegisterNetEvent("md-houserobberies:client:sellloot", function(data)
     local chance = math.random(1,100)
    
     if data.success >= chance then 
-        TriggerServerEvent('md-houserobberies:server:sellloot', data.item, data.min, data.max)
+        TriggerServerEvent('md-houserobberies:server:sellloot', data.item)
     else
         TriggerServerEvent('md-houserobberies:server:loseloot', data.item)
     end
