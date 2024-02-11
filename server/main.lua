@@ -110,7 +110,7 @@ RegisterNetEvent('md-houserobbery:server:GetLoot', function(tier, rewardtype, ob
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
-    if #(playerCoords - objectCoords) > 1 then return end -- Prevent loot vacuums
+    if #(playerCoords - objectCoords) > 3 then return end -- Prevent loot vacuums
     local chance = math.random(1,100)
     local cashamount = math.random(Config.CashMin, Config.CashMax)
     local randomItem = Config.Rewards[tier][rewardtype][math.random(1, #Config.Rewards[tier][rewardtype])]
