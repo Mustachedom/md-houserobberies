@@ -582,7 +582,7 @@ RegisterNetEvent("md-houserobberies:client:openblackmarket", function(data)
             if Config.Oxmenu then
                 blackmarketmenu[#blackmarketmenu + 1] = {
                     icon = "nui://"..Config.Inventoryimagelink..QBCore.Shared.Items[v.item].image,
-                     header = v.label,
+                     header = QBCore.Shared.Items[v.item].label,
                      title = QBCore.Shared.Items[v.item].label,
                      description = "$".. v.minvalue .. "  -  $" .. v.maxvalue,
                      event = "md-houserobberies:client:sellloot",
