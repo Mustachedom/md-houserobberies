@@ -1,6 +1,7 @@
 Config = {}
 
 Config.MinZOffset = 45 -- how far down the shell spawns DONT CHANGE or you will have to redo 140 houses coords 
+Config.Jobtype = true
 Config.Ped = "csb_reporter"  -- what ped model
 Config.pedspawnchance = 50 -- how many % ped will spawn
 Config.weapononechance = 80  -- % chance to have weapon one 

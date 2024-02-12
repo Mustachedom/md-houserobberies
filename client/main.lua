@@ -24,8 +24,8 @@ local function openHouseAnim()
     Wait(400)
     ClearPedTasks(PlayerPedId())
 end
+
 local function PoliceCall()
-    
     print"Were no strangers to love You know the rules and so do I A full commitment's what I'm thinking of You wouldn't get this from any other guy"
         print"I just wanna tell you how I'm feeling Gotta make you understand"
         print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
@@ -71,8 +71,8 @@ local function PoliceCall()
         Wait(5000)
         QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
         Wait(5000)
+end
 
-end        
 local function enterRobberyHouse(house)
     TriggerServerEvent('InteractSound_SV:PlayOnSource', 'houses_door_open', 0.25)
     openHouseAnim()
@@ -287,8 +287,12 @@ CreateThread(function()
                     end)
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                    if Config.Jobtype == true then
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
+                    else
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
                 end
+            end
             },
             {
                 name = 'lockup',
@@ -307,8 +311,12 @@ CreateThread(function()
                     end)
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                    if Config.Jobtype == true then
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
+                    else
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
                 end
+            end
             },
             {
                 name = 'LockPickHouse',
@@ -369,7 +377,11 @@ CreateThread(function()
 
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
+                    if Config.Jobtype == true then
+                        if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
+                    else
+                        if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
+                    end
             }
          },
         })        
@@ -436,7 +448,11 @@ CreateThread(function()
                     end)
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                    if Config.Jobtype == true then
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
+                    else
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                    end
                 end
             },
             {
@@ -456,7 +472,11 @@ CreateThread(function()
                     end)
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                    if Config.Jobtype == true then
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
+                    else
+                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
+                    end
                 end
             },
             {
@@ -518,7 +538,11 @@ CreateThread(function()
 
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
+                    if Config.Jobtype == true then
+                        if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
+                    else
+                        if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
+                    end
             }
          },
             distance = 2.0  
