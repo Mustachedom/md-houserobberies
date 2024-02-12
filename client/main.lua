@@ -448,11 +448,7 @@ CreateThread(function()
                     end)
                 end,
                 canInteract = function()
-                    if Config.Jobtype == true then
                         if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
-                    else
-                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
-                    end
                 end
             },
             {
@@ -472,11 +468,7 @@ CreateThread(function()
                     end)
                 end,
                 canInteract = function()
-                    if Config.Jobtype == true then
-                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
-                    else
-                        if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.name == 'police' then return true end
-                    end
+                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
                 end
             },
             {
@@ -538,11 +530,8 @@ CreateThread(function()
 
                 end,
                 canInteract = function()
-                    if Config.Jobtype == true then
-                        if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
-                    else
-                        if Config.Houses[k]['spawned'] == false and QBCore.Functions.GetPlayerData().job.name ~= 'police' then return true end end
-                    end
+                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end
+                end
             }
          },
             distance = 2.0  
