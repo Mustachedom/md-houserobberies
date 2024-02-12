@@ -26,7 +26,51 @@ local function openHouseAnim()
 end
 
 local function PoliceCall()
-    exports['ps-dispatch']:HouseRobbery()
+    print"Were no strangers to love You know the rules and so do I A full commitment's what I'm thinking of You wouldn't get this from any other guy"
+        print"I just wanna tell you how I'm feeling Gotta make you understand"
+        print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
+        print"Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you"
+        print"Weve known each other for so long Your hearts been aching, but Youre too shy to say it Inside, we both know what's been going on We know the game and were gonna play it"
+        print"And if you ask me how I'm feeling Don't tell me you're too blind to see"
+        print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
+        print"Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you"
+        print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
+        print"Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you"
+        print"Weve known each other for so long Your hearts been aching, but Youre too shy to say it Inside, we both know what's been going on We know the game and were gonna play it"
+        print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
+        print"Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you"
+        print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
+        print"Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you"
+        QBCore.Functions.Notify("Were no strangers to love You know the rules and so do I A full commitment's what I'm thinking of You wouldn't get this from any other guy", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("I just wanna tell you how I'm feeling Gotta make you understand", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna give you up Never gonna let you down Never gonna run around and desert you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Weve known each other for so long Your hearts been aching, but Youre too shy to say it Inside, we both know what's been going on We know the game and were gonna play it", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("And if you ask me how I'm feeling Don't tell me you're too blind to see", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna give you up Never gonna let you down Never gonna run around and desert you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna give you up Never gonna let you down Never gonna run around and desert you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Weve known each other for so long Your hearts been aching, but Youre too shy to say it Inside, we both know what's been going on We know the game and were gonna play it", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna give you up Never gonna let you down Never gonna run around and desert you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna give you up Never gonna let you down Never gonna run around and desert you", 'error')
+        Wait(5000)
+        QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
+        Wait(5000)
 end
 
 local function enterRobberyHouse(house)
