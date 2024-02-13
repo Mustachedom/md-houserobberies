@@ -287,7 +287,7 @@ CreateThread(function()
                     end)
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end
+                    if Config.Houses[k]['spawned'] and  QBCore.Functions.GetPlayerData().job.type == 'leo' then return true end 
                 end
             
             },
@@ -371,7 +371,7 @@ CreateThread(function()
 
                 end,
                 canInteract = function()
-                    if Config.Houses[k]['spawned'] == false and  QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end
+                    if Config.Houses[k]['spawned'] == false and  QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
                 
             }
          },
