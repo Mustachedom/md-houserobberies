@@ -4,7 +4,7 @@ local currentHouse = nil
 local closestHouse
 local houseObj = {}
 local POIOffsets = nil
-
+local CurrentCops = 0
 
 -- Functions
 local function loadParticle(dict)
@@ -313,6 +313,7 @@ CreateThread(function()
                 icon = "fas fa-sign-in-alt",
                 label = labeltext,
                 onSelect = function()
+		if CurrentCops >= Config.MinCops then							
                     if Config.Houses[k]['tier'] <= 4  then
                         if QBCore.Functions.HasItem('lockpick') then
                             exports['ps-ui']:Circle(function(success)
@@ -364,7 +365,9 @@ CreateThread(function()
                             QBCore.Functions.Notify("You Need A Mansion Laptop","error")
                         end
                     end
-
+		else
+			QBCore.Functions.Notify("Not Enough Cops","error")
+		end								
                 end,
                 canInteract = function()
                     if Config.Houses[k]['spawned'] == false and  QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
@@ -463,6 +466,7 @@ CreateThread(function()
                 icon = "fas fa-sign-in-alt",
                 label = labeltext,
                 action = function()
+		if CurrentCops >= Config.MinCops then							
                     if Config.Houses[k]['tier'] <= 4  then
                         if QBCore.Functions.HasItem('lockpick') then
                             exports['ps-ui']:Circle(function(success)
@@ -514,7 +518,9 @@ CreateThread(function()
                             QBCore.Functions.Notify("You Need A Mansion Laptop","error")
                         end
                     end
-
+		else
+			QBCore.Functions.Notify("Not Enough Cops","error")
+		end	
                 end,
                 canInteract = function()
                     if Config.Houses[k]['spawned'] == false and  QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end
