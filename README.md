@@ -17,7 +17,8 @@
 - [k4mb1 free shells](https://forum.cfx.re/t/free-props-starter-shells-for-housing-scripts/4826922)
 
 - [ability to read a readme](https://www.hookedonphonics.com/)
-
+**if you are getting a qb-target error, the recently did a change and it ended up breaking something and i have not figured it out yet. I highly recommend using either ox_target(big better anyway) or an older qb-target (any with the blue eye works)**
+  
 ## How to install like a boss
 **step 1**
 
