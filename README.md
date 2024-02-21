@@ -18,7 +18,7 @@
 
 - [ability to read a readme](https://www.hookedonphonics.com/)
 ## NOTE
-**if you are getting a qb-target error, the recently did a change and it ended up breaking something and i have not figured it out yet. I highly recommend using either ox_target(big better anyway) or an older qb-target (any with the blue eye works)**
+**if you are getting a qb-target error or not able to select displayed options, the recently did a change and it ended up breaking something and i have not figured it out yet. I highly recommend using either ox_target(big better anyway) or an older qb-target (any with the blue eye works)**
   
 ## How to install like a boss
 **step 1**
