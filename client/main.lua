@@ -110,6 +110,7 @@ local function enterRobberyHouse(house)
 					icon = "fas fa-sign-in-alt",
 					label = "Steal Loot",
 					action = function()
+                        TriggerServerEvent('md-houserobbery:server:setlootstatebusy', house, v.num)
                         TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
                         QBCore.Functions.Progressbar("drink_something", "Stealing", math.random(Config.MinRobTime, Config.MaxRobTIme), false, true, {
                             disableMovement = true,
@@ -126,13 +127,14 @@ local function enterRobberyHouse(house)
                                     TriggerServerEvent('md-houserobbery:server:GetLoot', Config.Houses[house].tier, v.type, objectCoords)
                                 else
                                    QBCore.Functions.Notify("Dude You Cant Even Do This, C'mon", "error")
+                                   TriggerServerEvent('md-houserobbery:server:resetlootstatebusy', house, v.num)
                                 end
                             end, 2, 8) -- NumberOfCircles, MS
                             
                         end)    
 					end,
                     canInteract = function()
-                        if v.taken == false then return true end end
+                        if v.taken == false and v.busy == false then return true end end
                    
 				},
 			},
@@ -232,6 +234,9 @@ end)
 
 RegisterNetEvent('md-houserobbery:client:SetLootState', function(house, k, state)
     Config.Houses[house]['loot'][k].taken = state
+end)
+RegisterNetEvent('md-houserobbery:client:SetLootStateBusy', function(house, k, state)
+    Config.Houses[house]['loot'][k].busy = state
 end)
 
 RegisterNetEvent('md-houserobbery:client:SetBusyState', function(lootspot, house, bool)
@@ -634,3 +639,4 @@ RegisterNetEvent("md-houserobberies:client:sellloot", function(data)
         TriggerServerEvent('md-houserobberies:server:loseloot', data.item)
     end
 end)
+
