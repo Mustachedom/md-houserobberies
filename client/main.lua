@@ -408,6 +408,11 @@ CreateThread(function()
                 labeltext = "Break In"    
             end
             exports['qb-target']:AddBoxZone("enterrobbery"..k, v.coords,1.5, 1.75, {
+		name = "enterrobbery"..k,
+                heading = 0.0,
+                debugPoly = false,
+                minZ = v.coords.z-2,
+                maxZ = v.coords.z+2,  
             }, {
             options = {
             {
