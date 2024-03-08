@@ -65,6 +65,52 @@
 
 	- head to `md-houserobberies/client/main.lua` **27** and change to what you use for police alert
 	- if you dont, your people will be annoyed
-	
+**step 6**
+      --if you use qb-target remove this code around 384-402 line in client/main.lua:
+
+   
+        leavehouserobbery = exports.ox_target:addBoxZone({
+                coords = v.insidecoords,
+                size = vec(1,1,3),
+                rotation = 0,
+                debug = false,
+                options = {
+                    {
+                        name = 'leaverobbery',
+                        icon = "fas fa-sign-in-alt",
+                        label = "Leave Robbery House",
+                        onSelect = function()
+                            SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
+                            inside = false
+                            currentHouse = nil
+                        end,
+                    
+                    },
+                },
+                distance = 2.0
+                })
+with this:
 
 
+leavehouserobbery = exports['qb-target']:addBoxZone({
+                coords = v.insidecoords,
+                size = vec(1,1,3),
+                rotation = 0,
+                debug = false,
+                options = {
+                    {
+                        name = 'leaverobbery',
+                        icon = "fas fa-sign-in-alt",
+                        label = "Leave Robbery House",
+                        onSelect = function()
+                            SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
+                            inside = false
+                            currentHouse = nil
+                        end,
+                    
+                    },
+                },
+                distance = 2.0
+                })
+
+bye, bye
