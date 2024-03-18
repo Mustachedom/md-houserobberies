@@ -544,13 +544,14 @@ CreateThread(function()
             }
          },
             distance = 2.0  
-            })        
-            exports['qb-target']:AddBoxZone("leaverobbery"..k, vector3(v.insidecoords.x, v.insidecoords.y, v.insidecoords.z-100),1.5, 1.75, {
+            })       
+		local leavecoord = vector3(v.insidecoords.x, v.insidecoords.y, v.insidecoords.z-100)
+            exports['qb-target']:AddBoxZone("leaverobbery"..k, leavecoord,1.5, 1.75, {
                 name = "leaverobbery"..k,
                 heading = 0.0,
                 debugPoly = false,
-                minZ = v.insidecoords.z-102,
-                maxZ = v.insidecoords.z+102,
+                minZ = leavecoord.z-2,
+                maxZ = leavecoord.z+2,
                 }, {
                 options = {
                     {
