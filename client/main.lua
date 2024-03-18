@@ -77,7 +77,7 @@ local function enterRobberyHouse(house)
     TriggerServerEvent('InteractSound_SV:PlayOnSource', 'houses_door_open', 0.25)
     openHouseAnim()
     Wait(250)
-    local coords = { x = Config.Houses[house].coords.x, y = Config.Houses[house].coords.y, z = Config.Houses[house].coords.z - Config.MinZOffset }
+    local coords = { x = Config.Houses[house].coords.x, y = Config.Houses[house].coords.y, z = Config.Houses[house].coords.z - Config.MinZOffset -100.0}
     if Config.Houses[house].tier == 1 then
         data = exports['qb-interior']:CreateCaravanShell(coords)
     elseif  Config.Houses[house].tier == 2 then
@@ -187,7 +187,7 @@ RegisterNetEvent('md-houserobbery:client:setHouseState', function(house, state)
     if Config.pedspawnchance >= chance then
         lib.requestModel(Config.Ped, 1000)
         Wait(3200)
-       local homeowner = CreatePed(0, Config.Ped, Config.Houses[house].ped.x, Config.Houses[house].ped.y, Config.Houses[house].ped.z, 0.0, false, false)
+       local homeowner = CreatePed(0, Config.Ped, Config.Houses[house].ped.x, Config.Houses[house].ped.y, Config.Houses[house].ped.z-100, 0.0, false, false)
          if weaponchance <= Config.weapononechance then
              GiveWeaponToPed(homeowner, Config.Weaponone, 1, false, true)
              TaskCombatPed(homeowner, PlayerPedId(), 0, 16)
@@ -255,7 +255,7 @@ CreateThread(function()
             end
             robberyhouse = exports.ox_target:addBoxZone({
                 coords = v.coords,
-                size = vec(1,1,3),
+                size = vec(1,1,2),
                 rotation = 0,
                 debug = false,
                 options = {
@@ -381,7 +381,7 @@ CreateThread(function()
          },
         })        
             leavehouserobbery = exports.ox_target:addBoxZone({
-                coords = v.insidecoords,
+                coords = vector3(v.insidecoords.x, v.insidecoords.y, v.insidecoords.z-100),
                 size = vec(1,1,3),
                 rotation = 0,
                 debug = false,
@@ -539,12 +539,12 @@ CreateThread(function()
          },
             distance = 2.0  
             })        
-            exports['qb-target']:AddBoxZone("leaverobbery"..k, v.insidecoords,1.5, 1.75, {
+            exports['qb-target']:AddBoxZone("leaverobbery"..k, vector3(v.insidecoords.x, v.insidecoords.y, v.insidecoords.z-100),1.5, 1.75, {
                 name = "leaverobbery"..k,
                 heading = 0.0,
                 debugPoly = false,
-                minZ = v.insidecoords.z-2,
-                maxZ = v.insidecoords.z+2,
+                minZ = v.insidecoords.z-102,
+                maxZ = v.insidecoords.z+102,
                 }, {
                 options = {
                     {
