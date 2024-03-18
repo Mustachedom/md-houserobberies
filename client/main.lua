@@ -155,39 +155,13 @@ local function enterRobberyHouse(house)
       
     end)
 end
-
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    QBCore.Functions.TriggerCallback('md-houserobbery:server:GetHouseConfig', function(HouseConfig)
-        Config.Houses = HouseConfig
-    end)
-end)
-
-RegisterNetEvent('md-houserobbery:client:deleteobject', function(k, house)
-   Wait(Config.HouseTimer * 60000)
-    DeleteObject(k)
-end)
-
-RegisterNetEvent('md-houserobbery:client:ResetHouseState', function(house)
-    Config.Houses[house]['spawned'] = false
-end)
-
-
-RegisterNetEvent('police:SetCopCount', function(amount)
-    CurrentCops = amount
-end)
-
-RegisterNetEvent('md-houserobbery:client:enterHouse', function(house)
-    enterRobberyHouse(house)
-end)
-
-RegisterNetEvent('md-houserobbery:client:setHouseState', function(house, state)
-    Config.Houses[house]['spawned'] = state
+local function SpawnHomeowner(k)
     local chance = math.random(1,100)
     local weaponchance = math.random(1,100)
-    if Config.pedspawnchance >= chance then
+    if 101 >= chance then
         lib.requestModel(Config.Ped, 1000)
-        Wait(3200)
-       local homeowner = CreatePed(0, Config.Ped, Config.Houses[house].ped.x, Config.Houses[house].ped.y, Config.Houses[house].ped.z-100, 0.0, false, false)
+        Wait(2000)
+       local homeowner = CreatePed(0, Config.Ped, Config.Houses[k].ped.x, Config.Houses[k].ped.y, Config.Houses[k].ped.z - 100, 0.0, true, false)
          if weaponchance <= Config.weapononechance then
              GiveWeaponToPed(homeowner, Config.Weaponone, 1, false, true)
              TaskCombatPed(homeowner, PlayerPedId(), 0, 16)
@@ -228,7 +202,33 @@ RegisterNetEvent('md-houserobbery:client:setHouseState', function(house, state)
              }
          })
     end
-   
+end    
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    QBCore.Functions.TriggerCallback('md-houserobbery:server:GetHouseConfig', function(HouseConfig)
+        Config.Houses = HouseConfig
+    end)
+end)
+
+RegisterNetEvent('md-houserobbery:client:deleteobject', function(k, house)
+   Wait(Config.HouseTimer * 60000)
+    DeleteObject(k)
+end)
+
+RegisterNetEvent('md-houserobbery:client:ResetHouseState', function(house)
+    Config.Houses[house]['spawned'] = false
+end)
+
+
+RegisterNetEvent('police:SetCopCount', function(amount)
+    CurrentCops = amount
+end)
+
+RegisterNetEvent('md-houserobbery:client:enterHouse', function(house)
+    enterRobberyHouse(house)
+end)
+
+RegisterNetEvent('md-houserobbery:client:setHouseState', function(house, state)
+    Config.Houses[house]['spawned'] = state
 end)
 
 
@@ -318,12 +318,13 @@ CreateThread(function()
                 icon = "fas fa-sign-in-alt",
                 label = labeltext,
                 onSelect = function()
-		if CurrentCops >= Config.MinCops then							
+		        if CurrentCops >= Config.MinCops then							
                     if Config.Houses[k]['tier'] <= 4  then
                         if QBCore.Functions.HasItem('lockpick') then
                             exports['ps-ui']:Circle(function(success)
                                 if success then
                                     TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    SpawnHomeowner(k)
                                     if 20 <= math.random(1,100) then
                                         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
                                         PoliceCall()
@@ -340,6 +341,7 @@ CreateThread(function()
                             exports['ps-ui']:VarHack(function(success)
                                 if success then
                                     TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    SpawnHomeowner(k)
                                     if 20 <= math.random(1,100) then
                                         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
                                         PoliceCall()
@@ -357,6 +359,7 @@ CreateThread(function()
                             exports['ps-ui']:Scrambler(function(success)
                                 if success then
                                   TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                  SpawnHomeowner(k)
                                     if 20 <= math.random(1,100) then
                                         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
                                         PoliceCall()
@@ -480,8 +483,9 @@ CreateThread(function()
                     if Config.Houses[k]['tier'] <= 4  then
                         if QBCore.Functions.HasItem('lockpick') then
                             exports['ps-ui']:Circle(function(success)
-                                if success then
+                                if success then                                    
                                     TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    SpawnHomeowner(k)
                                     if 20 <= math.random(1,100) then
                                         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
                                         PoliceCall()
@@ -498,6 +502,7 @@ CreateThread(function()
                             exports['ps-ui']:VarHack(function(success)
                                 if success then
                                     TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                    SpawnHomeowner(k)
                                     if 20 <= math.random(1,100) then
                                         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
                                         PoliceCall()
@@ -515,6 +520,7 @@ CreateThread(function()
                             exports['ps-ui']:Scrambler(function(success)
                                 if success then
                                   TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+                                  SpawnHomeowner(k)
                                     if 20 <= math.random(1,100) then
                                         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 150.0, "siren", 0.5)
                                         PoliceCall()
