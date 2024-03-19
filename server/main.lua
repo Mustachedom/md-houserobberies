@@ -1,24 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
--- Functions
-
-local function ResetHouseStateTimer(house)
-    CreateThread(function()
-        Wait(Config.HouseTimer * 60000)
-        Config.Houses[house].spawned = false
-        TriggerClientEvent('qb-houserobbery:client:ResetHouseState', -1, house)
-    end)
-end
-local function Resetobject(house)
-    CreateThread(function()
-        Wait(Config.HouseTimer * 60000)
-         Config.Houses[house]['loot'].taken = false
-         Config.Houses[house]['loot'].busy = false
-        TriggerClientEvent('md-houserobbery:client:ResetHouseState', -1, house, k, false)
-    end)
-end
-
--- Callbacks
 RegisterNetEvent('md-houserobbery:server:accessbreak', function(tier)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
@@ -37,9 +18,9 @@ RegisterNetEvent('md-houserobbery:server:accessbreak', function(tier)
         if luck <= 85 then 
             Player.Functions.RemoveItem('mansionlaptop', 1)
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['mansionlaptop'], "remove")
-        end   
+        end 
     end
-end)        
+end)
 
 RegisterNetEvent('md-houserobberies:server:sellloot', function(itemName)
     local src = source
@@ -75,52 +56,29 @@ RegisterNetEvent('md-houserobberies:server:loseloot', function(item)
     end
 end)
 
-QBCore.Functions.CreateCallback('md-houserobbery:server:GetHouseConfig', function(_, cb)
-    cb(Config.Houses)
-end)
-
--- Events
-RegisterNetEvent('md-houserobbery:server:closeHouse', function(house)
-    TriggerClientEvent('md-houserobbery:client:ResetHouseState', -1, house)
-end)    
-RegisterNetEvent('md-houserobbery:server:SetBusyState', function(lootspot, house, bool)
-    Config.Houses[house]['loot'][lootspot] = bool
-    TriggerClientEvent('md-houserobbery:client:SetBusyState', -1, lootspot, house, bool)
-end)
-
 RegisterNetEvent('md-houserobbery:server:enterHouse', function(house)
     local src = source
-    if not Config.Houses[house]['spawned'] then
-        ResetHouseStateTimer(house)
-        TriggerClientEvent('md-houserobbery:client:setHouseState', -1, house, true)
-    end
     TriggerClientEvent('md-houserobbery:client:enterHouse', src, house)
     Config.Houses[house]['spawned'] = true
+    TriggerClientEvent('md-houserobbery:client:setHouseState', -1, house, true)
+    Wait(1000 * 60 * Config.HouseTimer)
+    Config.Houses[house]['spawned'] = false
+    TriggerClientEvent('md-houserobbery:client:setHouseState', -1, house, false)
 end)
 
 RegisterNetEvent('md-houserobbery:server:setlootused', function(house, k)
-    local src = source 
-    if not Config.Houses[house]['loot'][k].taken then
-        Resetobject(house)
-        TriggerClientEvent('md-houserobbery:client:SetLootState', -1, house, k, true)
-    end
     Config.Houses[house]['loot'][k].taken = true
-end)
-RegisterNetEvent('md-houserobbery:server:setlootstatebusy', function(house, k)
-    local src = source 
-    if not Config.Houses[house]['loot'][k].busy then
-        TriggerClientEvent('md-houserobbery:client:SetLootStateBusy', -1, house, k, true)
-    end
-    Config.Houses[house]['loot'][k].busy = true
+    TriggerClientEvent('md-houserobbery:client:SetLootState', -1, house, k, true)
+    Wait(1000 * 60 * Config.HouseTimer)
+    Config.Houses[house]['loot'][k].taken = false
+    TriggerClientEvent('md-houserobbery:client:SetLootState', -1, house, k, false)
 end)
 
-RegisterNetEvent('md-houserobbery:server:resetlootstatebusy', function(house, k)
-    local src = source 
-    if  Config.Houses[house]['loot'][k].busy then
-        TriggerClientEvent('md-houserobbery:client:reSetLootStateBusy', -1, house, k, false)
-    end
-    Config.Houses[house]['loot'][k].busy = false
+RegisterNetEvent('md-houserobbery:server:setlootstatebusy', function(house, k,state)
+    Config.Houses[house]['loot'][k].busy = state
+    TriggerClientEvent('md-houserobbery:client:SetLootStateBusy', -1, house, k, state)
 end)
+
 
 RegisterNetEvent('md-houserobbery:server:GetLoot', function(tier, rewardtype, objectCoords)
     local src = source
@@ -144,7 +102,7 @@ RegisterNetEvent('md-houserobbery:server:GetLoot', function(tier, rewardtype, ob
         end
     else
         TriggerClientEvent('QBCore:Notify', src, "This Isn't Worth Taking", "error") 
-    end   
+    end
 end)
 
 
