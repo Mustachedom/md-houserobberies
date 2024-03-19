@@ -22,7 +22,7 @@ local function openHouseAnim()
 end
 
 local function PoliceCall()
-    --[[print"Were no strangers to love You know the rules and so do I A full commitment's what I'm thinking of You wouldn't get this from any other guy"
+    	print"Were no strangers to love You know the rules and so do I A full commitment's what I'm thinking of You wouldn't get this from any other guy"
         print"I just wanna tell you how I'm feeling Gotta make you understand"
         print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
         print"Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you"
@@ -66,7 +66,7 @@ local function PoliceCall()
         QBCore.Functions.Notify("Never gonna give you up Never gonna let you down Never gonna run around and desert you", 'error')
         Wait(5000)
         QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
-        Wait(5000)]]
+        Wait(5000)
 end
 
 local function enterRobberyHouse(house)
