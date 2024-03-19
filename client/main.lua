@@ -1,9 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local inside = false
-local currentHouse = nil
-local closestHouse
 local houseObj = {}
-local POIOffsets = nil
 local CurrentCops = 0
 
 -- Functions
@@ -26,7 +22,7 @@ local function openHouseAnim()
 end
 
 local function PoliceCall()
-    print"Were no strangers to love You know the rules and so do I A full commitment's what I'm thinking of You wouldn't get this from any other guy"
+    --[[print"Were no strangers to love You know the rules and so do I A full commitment's what I'm thinking of You wouldn't get this from any other guy"
         print"I just wanna tell you how I'm feeling Gotta make you understand"
         print"Never gonna give you up Never gonna let you down Never gonna run around and desert you"
         print"Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you"
@@ -70,7 +66,7 @@ local function PoliceCall()
         QBCore.Functions.Notify("Never gonna give you up Never gonna let you down Never gonna run around and desert you", 'error')
         Wait(5000)
         QBCore.Functions.Notify("Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", 'error')
-        Wait(5000)
+        Wait(5000)]]
 end
 
 local function enterRobberyHouse(house)
@@ -110,7 +106,7 @@ local function enterRobberyHouse(house)
 					icon = "fas fa-sign-in-alt",
 					label = "Steal Loot",
 					action = function()
-                        TriggerServerEvent('md-houserobbery:server:setlootstatebusy', house, v.num)
+                        TriggerServerEvent('md-houserobbery:server:setlootstatebusy', house, v.num, true)
                         TriggerEvent('animations:client:EmoteCommandStart', {"uncuff"}) 
                         QBCore.Functions.Progressbar("drink_something", "Stealing", math.random(Config.MinRobTime, Config.MaxRobTIme), false, true, {
                             disableMovement = true,
@@ -125,9 +121,10 @@ local function enterRobberyHouse(house)
 						            DeleteObject(k)
                                     TriggerServerEvent('md-houserobbery:server:setlootused', house, v.num)
                                     TriggerServerEvent('md-houserobbery:server:GetLoot', Config.Houses[house].tier, v.type, objectCoords)
+                                    TriggerServerEvent('md-houserobbery:server:setlootstatebusy', house, v.num, false)
                                 else
                                    QBCore.Functions.Notify("Dude You Cant Even Do This, C'mon", "error")
-                                   TriggerServerEvent('md-houserobbery:server:resetlootstatebusy', house, v.num)
+                                   TriggerServerEvent('md-houserobbery:server:setlootstatebusy', house, v.num, false)
                                 end
                             end, 2, 8) -- NumberOfCircles, MS
                             
@@ -143,18 +140,16 @@ local function enterRobberyHouse(house)
         end
     end
     houseObj = data[1]
-    inside = true
-    currentHouse = house
     Wait(500)
     TriggerEvent('qb-weathersync:client:DisableSync')
-    Wait(Config.HouseTimer * 60000)
+    Wait(1000 * 60 * Config.HouseTimer)
     exports['qb-interior']:DespawnInterior(houseObj, function()
-       
-        inside = false
-        currentHouse = nil
-      
+        if #(GetEntityCoords(PlayerPedId()) - vector3(coords.x, coords.y, coords.z)) <= 15.0 then
+            SetEntityCoords(PlayerPedId(),Config.Houses[house]['coords'])
+        end
     end)
 end
+
 local function SpawnHomeowner(k)
     local chance = math.random(1,100)
     local weaponchance = math.random(1,100)
@@ -202,22 +197,12 @@ local function SpawnHomeowner(k)
              }
          })
     end
-end    
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    QBCore.Functions.TriggerCallback('md-houserobbery:server:GetHouseConfig', function(HouseConfig)
-        Config.Houses = HouseConfig
-    end)
-end)
+end   
 
 RegisterNetEvent('md-houserobbery:client:deleteobject', function(k, house)
-   Wait(Config.HouseTimer * 60000)
+    Wait(1000 * 60 * Config.HouseTimer)
     DeleteObject(k)
 end)
-
-RegisterNetEvent('md-houserobbery:client:ResetHouseState', function(house)
-    Config.Houses[house]['spawned'] = false
-end)
-
 
 RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
@@ -231,7 +216,6 @@ RegisterNetEvent('md-houserobbery:client:setHouseState', function(house, state)
     Config.Houses[house]['spawned'] = state
 end)
 
-
 RegisterNetEvent('md-houserobbery:client:SetLootState', function(house, k, state)
     Config.Houses[house]['loot'][k].taken = state
 end)
@@ -239,9 +223,6 @@ RegisterNetEvent('md-houserobbery:client:SetLootStateBusy', function(house, k, s
     Config.Houses[house]['loot'][k].busy = state
 end)
 
-RegisterNetEvent('md-houserobbery:client:SetBusyState', function(lootspot, house, bool)
-    Config.Houses[house]['loot'][lootspot] = bool
-end)
 
 
 CreateThread(function()
@@ -373,9 +354,9 @@ CreateThread(function()
                             QBCore.Functions.Notify("You Need A Mansion Laptop","error")
                         end
                     end
-		else
-			QBCore.Functions.Notify("Not Enough Cops","error")
-		end								
+		        else
+			        QBCore.Functions.Notify("Not Enough Cops","error")
+		        end								
                 end,
                 canInteract = function()
                     if Config.Houses[k]['spawned'] == false and  QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
@@ -383,7 +364,7 @@ CreateThread(function()
             }
          },
         })        
-            leavehouserobbery = exports.ox_target:addBoxZone({
+                leavehouserobbery = exports.ox_target:addBoxZone({
                 coords = vector3(v.insidecoords.x, v.insidecoords.y, v.insidecoords.z-100),
                 size = vec(1,1,3),
                 rotation = 0,
@@ -395,8 +376,7 @@ CreateThread(function()
                         label = "Leave Robbery House",
                         onSelect = function()
                             SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
-                            inside = false
-                            currentHouse = nil
+                           
                         end,
                     
                     },
@@ -411,7 +391,7 @@ CreateThread(function()
                 labeltext = "Break In"    
             end
             exports['qb-target']:AddBoxZone("enterrobbery"..k, v.coords,1.5, 1.75, {
-		name = "enterrobbery"..k,
+		        name = "enterrobbery"..k,
                 heading = 0.0,
                 debugPoly = false,
                 minZ = v.coords.z-2,
@@ -479,7 +459,7 @@ CreateThread(function()
                 icon = "fas fa-sign-in-alt",
                 label = labeltext,
                 action = function()
-		if CurrentCops >= Config.MinCops then							
+		        if CurrentCops >= Config.MinCops then							
                     if Config.Houses[k]['tier'] <= 4  then
                         if QBCore.Functions.HasItem('lockpick') then
                             exports['ps-ui']:Circle(function(success)
@@ -534,9 +514,9 @@ CreateThread(function()
                             QBCore.Functions.Notify("You Need A Mansion Laptop","error")
                         end
                     end
-		else
-			QBCore.Functions.Notify("Not Enough Cops","error")
-		end	
+		        else
+			        QBCore.Functions.Notify("Not Enough Cops","error")
+		        end	
                 end,
                 canInteract = function()
                     if Config.Houses[k]['spawned'] == false and  QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end
@@ -560,8 +540,6 @@ CreateThread(function()
                         label = "Leave Robbery House",
                         action = function()
                             SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
-                            inside = false
-                            currentHouse = nil
                         end,
                     
                     },
@@ -617,7 +595,6 @@ RegisterNetEvent("md-houserobberies:client:openblackmarket", function(data)
                      }
                  }
                 lib.registerContext({id = 'blackmarketmd',title = "Black Market", options = blackmarketmenu})
-                lib.showContext('blackmarketmd')
             else
                 blackmarketmenu[#blackmarketmenu + 1] = {
                     icon = "nui://"..Config.Inventoryimagelink..QBCore.Shared.Items[v.item].image,
@@ -632,11 +609,15 @@ RegisterNetEvent("md-houserobberies:client:openblackmarket", function(data)
                             success = v.successchance,
                             }
                         }
-                    }
-                    exports['qb-menu']:openMenu(blackmarketmenu)  	
+                    }	
             end
         end
     end
+    if Config.Oxmenu then 
+        lib.showContext('blackmarketmd')
+    else
+        exports['qb-menu']:openMenu(blackmarketmenu)
+    end    
     if notify == 0 then
         QBCore.Functions.Notify("Nothing To Sell", 'error')
     end
