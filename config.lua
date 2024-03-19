@@ -1,7 +1,7 @@
 Config = {}
 
 Config.MinZOffset = 45 -- how far down the shell spawns DONT CHANGE or you will have to redo 140 houses coords 
-Config.Jobtype = true
+Config.Jobtype = true -- if it checks for job type leo
 Config.Ped = "csb_reporter"  -- what ped model
 Config.pedspawnchance = 50 -- how many % ped will spawn
 Config.weapononechance = 80  -- % chance to have weapon one 
@@ -10,7 +10,7 @@ Config.Weapontwo = "weapon_bullpupshotgun" -- ped will have this weapon
 Config.MinCops = 0 -- how many police you want to be clocked in 
 Config.Oxmenu = false -- false = qb menu, true = ox menu
 Config.EmptyChance = 5 -- chance you wont get items
-Config.HouseTimer = 60 -- time in minutes for the shell to despawn and objects
+Config.HouseTimer = 15 -- time in minutes for the shell to despawn and objects
 Config.DebugHouseNumber = false -- changes the label when you target to the house number so if someone owns a preset house, you know which one to comment out :)
 Config.MinRobTime = 5000 -- minimum time in ms it takes to steal from a house
 Config.MaxRobTIme = 15000 -- Maximum time in ms it takes to steal from a house
@@ -21,7 +21,7 @@ Config.Inventoryimagelink = "ps-inventory/html/images/" -- the filepath to where
 Config.FenceSpawn = vector4(1552.11, 3603.45, 38.78, 231.85) -- where the fence ped spawns
 Config.FenceWeaponone = "weapon_bullpupshotgun" -- what weapon the fence gets when you assault him
 Config.FenceWeapontwo = "weapon_rpg"-- what weapon the fence gets when you assault him
-Config.OxTarget = false
+Config.OxTarget = true
 Config.Rewards = { -- the numbers in boxes translate to which tier of house and their loot. 1 = tier 1,  2 = tier 2, if that doesnt make sense hire a dev
     [1] = {
         cabinet = 	 {"bandage", "diamond_ring", "goldchain", "weed_skunk", "thermite", "cryptostick"},
