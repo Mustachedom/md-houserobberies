@@ -281,7 +281,6 @@ Config.BlackMarket = {
     [20] = {item = 'mdspeakers',       minvalue = 10, maxvalue = 30, successchance = 90},
     [21] = {item = 'mdtablet',      minvalue = 10, maxvalue = 30, successchance = 90},
     [22] = {item = 'mddesktop',     minvalue = 10, maxvalue = 30, successchance = 90},
-    [23] = {item = 'laptop',        minvalue = 10, maxvalue = 30, successchance = 90},
-    [24] = {item = 'mdmonitor',     minvalue = 10, maxvalue = 30, successchance = 90},
-    [25] = {item = 'checkbook',     minvalue = 10, maxvalue = 30, successchance = 90},
+    [23] = {item = 'mdmonitor',     minvalue = 10, maxvalue = 30, successchance = 90},
+    [24] = {item = 'checkbook',     minvalue = 10, maxvalue = 30, successchance = 90},
 }
