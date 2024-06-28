@@ -6,18 +6,15 @@ RegisterNetEvent('md-houserobbery:server:accessbreak', function(tier)
     local luck = math.random(1,100)
     if tier <= 4 then 
         if luck <= 20 then 
-            Player.Functions.RemoveItem('lockpick', 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['lockpick'], "remove")
+           RemoveItem('lockpick', 1)
         end
     elseif tier == 5 then 
         if luck <= 45 then 
-            Player.Functions.RemoveItem('houselaptop', 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['houselaptop'], "remove")
+           RemoveItem('houselaptop', 1)
         end
     else
         if luck <= 85 then 
-            Player.Functions.RemoveItem('mansionlaptop', 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['mansionlaptop'], "remove")
+           RemoveItem('mansionlaptop', 1)
         end 
     end
 end)
@@ -37,9 +34,9 @@ RegisterNetEvent('md-houserobberies:server:sellloot', function(itemName)
     local itemsell = Player.Functions.GetItemByName(itemName)
 
     if itemsell and itemsell.amount > 0 then
-        if   Player.Functions.RemoveItem(itemName, itemsell.amount) then
+        if RemoveItem(itemName, itemsell.amount) then
             Player.Functions.AddMoney('cash', price * itemsell.amount)
-              TriggerClientEvent('QBCore:Notify', src, "You received " .. itemsell.amount * price .. " of Cash.", "success")
+            Notifys("You received " .. itemsell.amount * price .. " of Cash.", "success")
         end
     end
 end)
@@ -50,8 +47,8 @@ RegisterNetEvent('md-houserobberies:server:loseloot', function(item)
     local itemsell = Player.Functions.GetItemByName(item)
 
     if itemsell and itemsell.amount > 0 then
-        if Player.Functions.RemoveItem(item, itemsell.amount) then
-              TriggerClientEvent('QBCore:Notify', src, "You Just Got Robbed of " ..itemsell.amount .." ".. QBCore.Shared.Items[item].label .. "s!", "error")
+        if RemoveItem(item, itemsell.amount) then
+            Notifys("You Just Got Robbed of " ..itemsell.amount .." ".. QBCore.Shared.Items[item].label .. "s!", "error")
         end
     end
 end)
@@ -79,7 +76,13 @@ RegisterNetEvent('md-houserobbery:server:setlootstatebusy', function(house, k,st
     TriggerClientEvent('md-houserobbery:client:SetLootStateBusy', -1, house, k, state)
 end)
 
-
+RegisterNetEvent('md-houserobbery:server:closeHouse', function(house)
+    Config.Houses[house]['spawned'] = false
+    TriggerClientEvent('md-houserobbery:client:setHouseState', -1, house, false)
+end)
+RegisterNetEvent('md-houserobberies:server:ptfx', function(loc)
+TriggerClientEvent('md-housrobberies:client:ptfx', -1, loc)
+end)
 RegisterNetEvent('md-houserobbery:server:GetLoot', function(tier, rewardtype, objectCoords)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
@@ -93,15 +96,14 @@ RegisterNetEvent('md-houserobbery:server:GetLoot', function(tier, rewardtype, ob
         for k, v in pairs (Config.ItemAmounts) do 
             if k == randomItem then 
                 if v == nil then v = 1 end
-                    Player.Functions.AddItem(randomItem, v)
-                    TriggerClientEvent("inventory:client:ItemBox", src, itemInfo, "add",  v)
+                AddItem(randomItem, v)
             end  
         end
         if Config.CashChance <= chance then
             Player.Functions.AddMoney('cash', cashamount)
         end
     else
-        TriggerClientEvent('QBCore:Notify', src, "This Isn't Worth Taking", "error") 
+        Notifys("This Isn't Worth Taking", "error") 
     end
 end)
 
