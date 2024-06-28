@@ -17,9 +17,7 @@
 - [k4mb1 free shells](https://forum.cfx.re/t/free-props-starter-shells-for-housing-scripts/4826922)
 
 - [ability to read a readme](https://www.hookedonphonics.com/)
-## NOTE
-**if you are getting a qb-target error or not able to select displayed options, the recently did a change and it ended up breaking something and i have not figured it out yet. I highly recommend using either ox_target(big better anyway) or an older qb-target (any with the blue eye works)**
-  
+
 ## How to install like a boss
 **step 1**
 
@@ -58,13 +56,5 @@
 **step 4**
 
 - Modify `md-houserobberies/config.lua` to your liking
-
-**step 5**
-
-- edit the following function
-
-	- head to `md-houserobberies/client/main.lua` **27** and change to what you use for police alert
-	- if you dont, your people will be annoyed
-	
 
 
