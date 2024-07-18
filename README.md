@@ -32,10 +32,14 @@
 
 - Modify `md-houserobberies/config.lua` to your liking
 
-<h1>OPTIONAL</h1>
-**Fivemerr** 
-- to integrate with fivemerr make sure you have ```set fivemerrLogs "API_KEY"``` in your server.cfg
+<h1>OPTIONAL</h1>|
+
+<h1>Fivemerr</h1>
+
+- to integrate with fivemerr make sure you have  ```set fivemerrLogs "API_KEY"```   in your server.cfg
+   
 - Head to /server/bridge.lua and line 3 turn local logs = true
+  
 - profit
 
 Why integrate with Fivemerr? Its a great place to store logs as it doesnt rely on discord webhooks and its far easier to search through. If you need an invite to their server look below
