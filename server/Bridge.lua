@@ -1,5 +1,48 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local notify = Config.Notify -- qb or ox
+local logs = true 
+local logapi = GetConvar("fivemerrLogs", "")
+local endpoint = 'https://api.fivemerr.com/v1/logs'
+local headers = {
+            ['Authorization'] = logapi,
+            ['Content-Type'] = 'application/json',
+    }
+
+CreateThread(function()
+if logs then 
+    print'^2 Logs Enabled for md-houserobberies'
+    if logapi == 'insert string here' then 
+        print'^1 homie you gotta set your api on line 4'
+    else
+        print'^2 API Key Looks Good, Dont Trust Me Though, Im Not Smart'
+    end
+else
+    print'^1 logs disabled for md-houserobberies'
+end
+end)
+function Log(message, type)
+if logs == false then return end	
+    local buffer = {
+        level = "info",
+        message = message,
+        resource = GetCurrentResourceName(),
+        metadata = {
+            houserobberies = type,
+            playerid = source
+        }
+    }
+     SetTimeout(500, function()
+         PerformHttpRequest(endpoint, function(status, _, _, response)
+             if status ~= 200 then 
+                 if type(response) == 'string' then
+                     response = json.decode(response) or response
+                 end
+             end
+         end, 'POST', json.encode(buffer), headers)
+         buffer = nil
+     end)
+end
+
 
 function Notifys(text, type)
     if notify == 'qb' then
@@ -38,7 +81,10 @@ end
 function RemoveItem( item, amount) 
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    if Player.Functions.RemoveItem(item, amount) then TriggerClientEvent("inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount) TriggerClientEvent("qb-inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount) return true
+    if Player.Functions.RemoveItem(item, amount) then 
+        TriggerClientEvent("inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount)
+        TriggerClientEvent("qb-inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount)
+    return true
      else 
         Notifys('You Need ' .. amount .. ' Of ' .. QBCore.Shared.Items[item].label .. ' To Do This', 'error')
     end
@@ -47,13 +93,16 @@ end
 function AddItem(item, amount) 
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    if Player.Functions.AddItem(item, amount) then TriggerClientEvent("inventory:client:ItemBox", src, QBCore.Shared.Items[item], "add", amount)  TriggerClientEvent("qb-inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount) return true
+    if Player.Functions.AddItem(item, amount) then 
+        TriggerClientEvent("inventory:client:ItemBox", src, QBCore.Shared.Items[item], "add", amount)
+        TriggerClientEvent("qb-inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount)
+        return true
      else 
         print('you sucks')
     end
 end
 
-QBCore.Functions.CreateCallback('md-houserobberies:server:GetCoppers', function(source, cb, args)
+lib.callback.register('md-houserobberies:server:GetCoppers', function(source, cb, args)
     local amount = 0
     local players = QBCore.Functions.GetQBPlayers()
     for k, v in pairs(players) do
@@ -61,9 +110,14 @@ QBCore.Functions.CreateCallback('md-houserobberies:server:GetCoppers', function(
           amount = amount + 1
          end
     end
-    cb(amount)
+   return amount
 end)
 
+function dist(source, Player, coords)
+    local pcoords = GetEntityCoords(Player)
+    local dist = #(pcoords - coords)
+        return dist
+end
 
 CreateThread(function()
     if not GetResourceState('ox_lib'):find("start") then 
