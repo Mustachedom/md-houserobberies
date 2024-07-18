@@ -6,39 +6,49 @@ local notifytype = Config.Notify
 local dispatch = Config.Dispatch
 
 
+local progressbartype = Config.progressbartype 
+local minigametype = Config.minigametype
+local notifytype = Config.Notify 
+local dispatch = Config.Dispatch
+
 function progressbar(text, time, anim)
 	TriggerEvent('animations:client:EmoteCommandStart', {anim}) 
 	if progressbartype == 'oxbar' then 
 	  if lib.progressBar({ duration = time, label = text, useWhileDead = false, canCancel = true, disable = { car = true, move = true},}) then 
-		TriggerEvent('animations:client:EmoteCommandStart', {"c"}) 
 		if GetResourceState('scully_emotemenu') == 'started' then
 			exports.scully_emotemenu:cancelEmote()
+		else
+			TriggerEvent('animations:client:EmoteCommandStart', {"c"}) 
 		end
 		return true
 	  end	 
 	elseif progressbartype == 'oxcir' then
 	  if lib.progressCircle({ duration = time, label = text, useWhileDead = false, canCancel = true, position = 'bottom', disable = { car = true,move = true},}) then 
-		TriggerEvent('animations:client:EmoteCommandStart', {"c"}) 
 		if GetResourceState('scully_emotemenu') == 'started' then
 			exports.scully_emotemenu:cancelEmote()
-		end	
+		else
+			TriggerEvent('animations:client:EmoteCommandStart', {"c"}) 
+		end
 		return true
 	  end
 	elseif progressbartype == 'qb' then
-		local test = false
+	local test = false
 		local cancelled = false
 	  QBCore.Functions.Progressbar("drink_something", text, time, false, true, { disableMovement = true, disableCarMovement = true, disableMouse = false, disableCombat = true, disableInventory = true,
 	  }, {}, {}, {}, function()-- Done
 		test = true
-		TriggerEvent('animations:client:EmoteCommandStart', {"c"}) 
 		if GetResourceState('scully_emotemenu') == 'started' then
 			exports.scully_emotemenu:cancelEmote()
-		end		
+		else
+			TriggerEvent('animations:client:EmoteCommandStart', {"c"}) 
+		end
 	  end, function()
 		cancelled = true
 		if GetResourceState('scully_emotemenu') == 'started' then
 			exports.scully_emotemenu:cancelEmote()
-		end		
+		else
+			TriggerEvent('animations:client:EmoteCommandStart', {"c"}) 
+		end
 	end)
 	  repeat 
 		Wait(100)
@@ -58,63 +68,77 @@ function minigame(num1, num2)
     	return check
 	elseif minigametype == 'ox' then
 		num1 = 'easy'
-		if num2 <= 8 then num2 = 'hard' elseif num2 >= 8 and num2 <= 12 then num2 = 'medium' else num2 = 'easy' end
+		if num2 <= 6 then num2 = 'hard' elseif num2 >= 7 and num2 <= 12 then num2 = 'medium' else num2 = 'easy' end
 		local success = lib.skillCheck({num1, num2}, {'1', '2', '3', '4'})
 		return success 
-    else
+    elseif minigametype == 'none' then
+		return true
+	else	
+		
         print"dude, it literally tells you what you need to set it as in the config"
     end
 end
 
+
  function Notify(text, type)
 	if notifytype =='ox' then
 	  lib.notify({title = text, type = type})
-    elseif notifytype == 'qb' then
+        elseif notifytype == 'qb' then
 	  QBCore.Functions.Notify(text, type)
 	elseif notifytype == 'okok' then
-		exports['okokNotify']:Alert('', text, 4000, type, false)
+	  exports['okokNotify']:Alert('', text, 4000, type, false)
 	else 
-       print"dude, it literally tells you what you need to set it as in the config"
-    end   
+       	print"dude, it literally tells you what you need to set it as in the config"
+    	end   
   end
 
-  function ItemCheck(item)
-	local success 
-		 if GetResourceState('ox_inventory') == 'started' then
-			local Items = exports['ox_inventory']:Items()
-			if Items[item] == nil then print("There Is No " .. item .. " In Your OX Items.lua") return end
-			if exports.ox_inventory:GetItemCount(item) >= 1 then return true else Notify('You Need ' .. Items[item].label .. " !", 'error') end
+function GetImage(img)
+	if GetResourceState('ox_inventory') == 'started' then
+		local Items = exports['ox_inventory']:Items()
+		if Items[img]['client'] then 
+			if Items[img]['client']['image'] then
+				return Items[img]['client']['image']
+			else
+				return "nui://ox_inventory/web/images/".. img.. '.png'
+			end
 		else
-			if QBCore.Shared.Items[item] == nil then print("There Is No " .. item .. " In Your QB Items.lua") return end
-			if QBCore.Functions.HasItem(item) then success = item return success else Notify('You Need ' .. QBCore.Shared.Items[item].label .. " !", 'error') end
+			return "nui://ox_inventory/web/images/".. img.. '.png'
 		end
+	elseif GetResourceState('ps-inventory') == 'started' then
+		return "nui://ps-inventory/html/images/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('lj-inventory') == 'started' then
+		return "nui://lj-inventory/html/images/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('qb-inventory') == 'started' then
+		return "nui://qb-inventory/html/images/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('qs-inventory') == 'started' then
+		return "nui://qs-inventory/html/img/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('origen_inventory') == 'started' then
+		return "nui://origen_inventory/html/img/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('core_inventory') == 'started' then
+		return "nui://core_inventory/html/img/".. QBCore.Shared.Items[img].image
 	end
-	
-	function Email(sender, subject, message)
-		if Config.Phone == 'yflip' then
-			local receiver = GetPlayerServerId(PlayerId())
-			local insertId, received = exports["yflip-phone"]:SendMail({
-				title = subject,
-				sender = sender,
-				senderDisplayName = sender,
-				content = message,
-				
-			}, 'phoneNumber', receiver)
-		elseif Config.Phone == 'qs' then
-			TriggerServerEvent('qs-smartphone:server:sendNewMail', {
-			   sender = sender,
-			   subject = subject,
-				message = message,
-				button = {}
-			})
-		else
-			TriggerServerEvent('qb-phone:server:sendNewMail', {
-				sender = sender,
-				subject = subject,
-				message = message,
-			})
-		end
-	end	  
+end
+
+function GetLabel(label)
+	if GetResourceState('ox_inventory') == 'started' then
+		local Items = exports['ox_inventory']:Items()
+		return Items[label]['label']
+	else
+		return QBCore.Shared.Items[label]['label']
+	end
+end
+
+
+function ItemCheck(item)
+local success 
+if GetResourceState('ox_inventory') == 'started' then
+    if exports.ox_inventory:GetItemCount(item) >= 1 then return true else Notify('You Need ' .. GetLabel(item) .. " !", 'error') end
+else
+    if QBCore.Shared.Items[item] == nil then print("There Is No " .. item .. " In Your QB Items.lua") return end
+    if QBCore.Functions.HasItem(item) then success = item return success else Notify('You Need ' .. QBCore.Shared.Items[item].label .. " !", 'error') end
+end
+end
+
 
 function PoliceCall(chance)
 	local math = math.random(1,100)
@@ -158,46 +182,15 @@ end
 
 function GetCops(number)
 	if number == 0 then return true end
-	local need = false
-	local nope = false
-	QBCore.Functions.TriggerCallback('md-houserobberies:server:GetCoppers', function(amount)
-		if amount >= number then need = true else Notify('You Need '.. number - amount .. ' More Cops To Do This', 'error') nope = true end
-	end)
-	repeat 
-		Wait(100)
-	until need or nope
-	if need then return true end
+	local amount = lib.callback.await('md-houserobberies:server:GetCoppers', false)
+	if amount >= number then return true else Notify('You Need '.. number - amount .. ' More Cops To Do This', 'error')  end
 end
 
 
-function GetImage(img)
-	if GetResourceState('ox_inventory') == 'started' then
-		local Items = exports['ox_inventory']:Items()
-		if Items[img]['client'] == nil then 
-			return Items[img]
-		else
-			return Items[img]['client']['image']
-		end
-	elseif GetResourceState('qb-inventory') == 'started' then
-		return "nui://qb-inventory/html/images/".. QBCore.Shared.Items[img].image
-	elseif GetResourceState('lj-inventory') == 'started' then
-		return "nui://lj-inventory/html/images/".. QBCore.Shared.Items[img].image
-	elseif GetResourceState('qb-inventory') == 'started' then
-		return "nui://qb-inventory/html/images/".. QBCore.Shared.Items[img].image
-	elseif GetResourceState('qs-inventory') == 'started' then
-		return "nui://qs-inventory/html/imgages/".. QBCore.Shared.Items[img].image
-	elseif GetResourceState('origen_inventory') == 'started' then
-		return "nui://origen_inventory/html/img/".. QBCore.Shared.Items[img].image
-	elseif GetResourceState('core_inventory') == 'started' then
-		return "nui://core_inventory/html/img/".. QBCore.Shared.Items[img].image
-	end
-end
-
-function GetLabel(img)
-	if GetResourceState('ox_inventory') == 'started' then
-		local Items = exports['ox_inventory']:Items()
-			return Items[img]['label']
-	else
-		return QBCore.Shared.Items[img].label
-	end
+function Freeze(entity, toggle, head)
+		SetEntityInvincible(entity, toggle)
+		SetEntityAsMissionEntity(entity, toggle, toggle)
+        FreezeEntityPosition(entity, toggle)
+        SetEntityHeading(entity, head)
+		SetBlockingOfNonTemporaryEvents(entity, toggle)
 end
