@@ -43,5 +43,7 @@ This is NOT a requirement but something I personally use and believe in.
   
 - profit
 
-Why integrate with Fivemerr? Its a great place to store logs as it doesnt rely on discord webhooks and its far easier to search through. If you need an invite to their server look below
+Why integrate with Fivemerr? Its a great place to store logs as it doesnt rely on discord webhooks and its far easier to search through
+
+As well as a place to offload images and videos from fivem that doesnt rely on discord since discord API will be automatically deleting images and videos after a certain amount of time If you need an invite to their server look below
 - [Fivemerr Discord](https://discord.com/invite/fivemerr)
