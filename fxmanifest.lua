@@ -3,7 +3,7 @@ author "Mustache Dom"
 description "Steal Things From Houses"
 fx_version 'cerulean'
 game 'gta5'
-version '2.5.0'
+version '2.5.1'
 
 shared_scripts {
     'config.lua',
