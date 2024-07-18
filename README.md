@@ -32,9 +32,10 @@
 
 - Modify `md-houserobberies/config.lua` to your liking
 
-<h1>OPTIONAL</h1>|
 
 <h1>Fivemerr</h1>
+This is **not** a requirement but something I personally use and believe in.
+
 
 - to integrate with fivemerr make sure you have  ```set fivemerrLogs "API_KEY"```   in your server.cfg
    
