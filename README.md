@@ -34,7 +34,7 @@
 
 
 <h1>Fivemerr</h1>
-This is **not** a requirement but something I personally use and believe in.
+This is NOT a requirement but something I personally use and believe in.
 
 
 - to integrate with fivemerr make sure you have  ```set fivemerrLogs "API_KEY"```   in your server.cfg
@@ -44,4 +44,4 @@ This is **not** a requirement but something I personally use and believe in.
 - profit
 
 Why integrate with Fivemerr? Its a great place to store logs as it doesnt rely on discord webhooks and its far easier to search through. If you need an invite to their server look below
-- [Fivemerr](discord.gg/fivemerr)
+- [Fivemerr Discord](https://discord.com/invite/fivemerr)
