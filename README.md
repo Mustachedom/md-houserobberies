@@ -47,3 +47,4 @@ Why integrate with Fivemerr? Its a great place to store logs as it doesnt rely o
 
 As well as a place to offload images and videos from fivem that doesnt rely on discord since discord API will be automatically deleting images and videos after a certain amount of time If you need an invite to their server look below
 - [Fivemerr Discord](https://discord.com/invite/fivemerr)
+- [Fivemerr Docs](https://docs.fivemerr.com/)
