@@ -91,7 +91,7 @@ end
 local function SpawnHomeowner(k)
     local chance = math.random(1,100)
     local weaponchance = math.random(1,100)
-    if 101 >= chance then
+    if Config.pedspawnchance >= chance then
         lib.requestModel(Config.Ped, 1000)
         Wait(2000)
        local homeowner = CreatePed(0, Config.Ped, Config.Houses[k].ped.x, Config.Houses[k].ped.y, Config.Houses[k].ped.z - 100, 0.0, true, false)
