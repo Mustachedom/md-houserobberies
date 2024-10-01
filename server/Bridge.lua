@@ -13,8 +13,8 @@ local headers = {
 CreateThread(function()
 if logs then 
     print'^2 Logs Enabled for md-houserobberies'
-    if logapi == 'insert string here' then 
-        print'^1 homie you gotta set your api on line 4'
+    if logapi == nil then 
+        print'^1 homie you gotta set your api in your server.cfg'
     else
         print'^2 API Key Looks Good, Dont Trust Me Though, Im Not Smart'
     end
