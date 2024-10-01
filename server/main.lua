@@ -8,17 +8,17 @@ RegisterNetEvent('md-houserobbery:server:accessbreak', function(tier)
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
     if tier <= 4 then 
         if luck <= 20 then 
-           RemoveItem('lockpick', 1)
+           RemoveItem(src,'lockpick', 1)
            Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Broke A Lockpick At A Tier ' .. tier .. ' House At ' .. playerCoords .. '!', 'break')
         end
     elseif tier == 5 then 
         if luck <= 45 then 
-           RemoveItem('houselaptop', 1)
+           RemoveItem(src,'houselaptop', 1)
            Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Broke A House Laptop At A Tier ' .. tier .. ' House At ' .. playerCoords .. '!', 'break')
         end
     else
         if luck <= 85 then 
-           RemoveItem('mansionlaptop', 1)
+           RemoveItem(src, 'mansionlaptop', 1)
            Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Broke A Mansion Laptop At A Tier ' .. tier .. ' House At ' .. playerCoords .. '!', 'break')
         end 
     end
@@ -35,12 +35,12 @@ RegisterNetEvent('md-houserobberies:server:sellloot', function(itemName)
             break
         end
     end
-    if not itemConfig then return end -- Don't allow players to turn any item into any amount of money
-    local price = math.random(itemConfig.minvalue, itemConfig.maxvalue) -- Retrieve price from config don't trust client
+    if not itemConfig then return end 
+    local price = math.random(itemConfig.minvalue, itemConfig.maxvalue) 
     local itemsell = Player.Functions.GetItemByName(itemName)
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
     if itemsell and itemsell.amount > 0 then
-        if RemoveItem(itemName, itemsell.amount) then
+        if RemoveItem(src, itemName, itemsell.amount) then
             Player.Functions.AddMoney('cash', price * itemsell.amount)
             Notifys("You received " .. itemsell.amount * price .. " of Cash.", "success")
             Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Sold  ' .. itemsell.amount .. ' ' .. itemName .. ' For A Price Of ' .. price * itemsell.amount .. ' At ' .. playerCoords .. '!', 'sell')
@@ -54,9 +54,9 @@ RegisterNetEvent('md-houserobberies:server:loseloot', function(item)
     local itemsell = Player.Functions.GetItemByName(item)
     local info = Player.PlayerData.charinfo
     if itemsell and itemsell.amount > 0 then
-        if RemoveItem(item, itemsell.amount) then
+        if RemoveItem(src, item, itemsell.amount) then
             Notifys("You Just Got Robbed of " ..itemsell.amount .." ".. QBCore.Shared.Items[item].label .. "s!", "error")
-            Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Got Robbed Of   ' .. itemsell.amount .. ' ' .. itemName .. ' Like A Nerd!', 'robbed')
+            Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Got Robbed Of   ' .. itemsell.amount .. ' ' .. item .. ' Like A Nerd!', 'robbed')
         end
     end
 end)
@@ -106,18 +106,17 @@ RegisterNetEvent('md-houserobbery:server:GetLoot', function(tier, rewardtype, ob
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local info = Player.PlayerData.charinfo
-    local playerCoords = GetEntityCoords(GetPlayerPed(src))
-    if #(playerCoords - objectCoords) > 3 then return end -- Prevent loot vacuums
+    if not CheckDist(source, objectCoords) then return end
     local chance = math.random(1,100)
     local cashamount = math.random(Config.CashMin, Config.CashMax)
-    local randomItem = Config.Rewards[tier][rewardtype][math.random(1, #Config.Rewards[tier][rewardtype])]
-    local itemInfo = QBCore.Shared.Items[randomItem]
+    local randomItem = math.random(1,#Config.Rewards[tier][rewardtype])
+    local data = Config.Rewards[tier][rewardtype][randomItem]
     if Config.EmptyChance <= chance then 
-        AddItem(randomItem, Config.ItemAmounts[randomItem])
+        AddItem(src, data.item, data.amount)
         if Config.CashChance <= chance then
             Player.Functions.AddMoney('cash', cashamount)
         end
-        Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Stole ' .. Config.ItemAmounts[randomItem] .. ' Of ' .. randomItem .. ' From A Tier ' .. tier .. ' House', 'stole')
+        Log('ID: 1 Name: '.. GetName(src).. ' Stole ' .. data.amount .. ' Of ' .. data.item .. ' From A Tier ' .. tier .. ' House', 'stole')
     else
         Notifys("This Isn't Worth Taking", "error") 
     end

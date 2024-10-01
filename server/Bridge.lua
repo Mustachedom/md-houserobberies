@@ -1,5 +1,7 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local notify = Config.Notify -- qb or ox
+
+------------------------------------------ logging stuff
 local logs = false 
 local logapi = GetConvar("fivemerrLogs", "")
 local endpoint = 'https://api.fivemerr.com/v1/logs'
@@ -10,16 +12,17 @@ local headers = {
 
 CreateThread(function()
 if logs then 
-    print'^2 Logs Enabled for md-houserobberies'
+    print'^2 Logs Enabled for md-drugs'
     if logapi == 'insert string here' then 
         print'^1 homie you gotta set your api on line 4'
     else
         print'^2 API Key Looks Good, Dont Trust Me Though, Im Not Smart'
     end
 else
-    print'^1 logs disabled for md-houserobberies'
+    print'^1 logs disabled for md-drugs'
 end
 end)
+
 function Log(message, type)
 if logs == false then return end	
     local buffer = {
@@ -27,7 +30,7 @@ if logs == false then return end
         message = message,
         resource = GetCurrentResourceName(),
         metadata = {
-            houserobberies = type,
+            drugs = type,
             playerid = source
         }
     }
@@ -42,65 +45,191 @@ if logs == false then return end
          buffer = nil
      end)
 end
+--------------------------------------------------- inventory catcher
+---
+local invname = ''
+CreateThread(function()
+if GetResourceState('ps-inventory') == 'started' then
+    invname = 'ps-inventory'
+elseif GetResourceState('qb-inventory') == 'started' then
+    invname = 'qb-inventory'
+else
+    invname = 'inventory'		
+end
+end)
 
+local inventory = ''
 
-function Notifys(text, type)
+CreateThread(function()
+if GetResourceState('ox_inventory') == 'started' then
+    inventory = 'ox'
+else
+    inventory = 'qb'
+end
+end)
+------------------------------------ functions
+---
+---
+function Notifys(source, text, type)
+    local src = source
     if notify == 'qb' then
-        TriggerClientEvent("QBCore:Notify", source, text, type)
+        TriggerClientEvent("QBCore:Notify", src, text, type)
     elseif notify == 'ox' then
-        lib.notify(source, { title = text, type = type})
+        lib.notify(src, { title = text, type = type})
     elseif notify == 'okok' then
-        TriggerClientEvent('okokNotify:Alert', source, '', text, 4000, type, false)
+        TriggerClientEvent('okokNotify:Alert', src, '', text, 4000, type, false)
     else
-        print"dude, it literally tells you what to put in the config"    
+        print"^1 Look At The Config For Proper Alert Options"    
     end    
-end    
-
-function Itemcheck(Player, item, amount, notify) 
-    local itemchecks = Player.Functions.GetItemByName(item)
-    local yes
-
-    if notify == nil then notify = false end
-    if itemchecks and itemchecks.amount >= amount then
-       yes = true  return yes
-    else 
-        if notify == 'true' then 
-            Notifys('You Need ' .. amount .. ' Of ' .. QBCore.Shared.Items[item].label .. ' To Do this', 'error') return else end 
-    end        
 end
 
-function CheckDist(source,Player, coords)
-    local pcoords = GetEntityCoords(Player)
-    local ok 
+function GetLabels(item) 
+    if inventory == 'qb' then
+        return QBCore.Shared.Items[item].label
+    elseif inventory == 'ox' then
+        local items = exports.ox_inventory:Items() 
+        return items[item].label
+    end
+end
+
+function Itemcheck(source, item, amount) 
+    if inventory == 'qb' then
+        local Player = QBCore.Functions.GetPlayer(source)
+        local itemchecks = Player.Functions.GetItemByName(item)
+        if itemchecks and itemchecks.amount >= amount then
+            return true
+        else 
+            Notifys(source, 'You Need ' .. amount .. ' Of ' .. GetLabels(item)  .. ' To Do this', 'error')
+            return false   
+        end
+    elseif inventory == 'ox' then
+       local has = exports.ox_inventory:GetItem(source, item , nil, true)
+        if has.count >= amount then 
+            return true
+        else
+            Notifys(source, 'You Need ' .. amount .. ' Of ' .. GetLabels(item) .. ' To Do This', 'error')
+            return false
+        end
+    end
+end
+
+function GetCoords(source) 
+    local ped = GetPlayerPed(source)
+    local playerCoords = GetEntityCoords(ped)
+    return playerCoords
+end
+
+function dist(source, coords)
+    local playerPed = GetPlayerPed(source)
+    local pcoords = GetEntityCoords(playerPed)
+    local dist = #(pcoords - coords)
+        return dist
+end
+
+function CheckDist(source, coords)
+    local playerPed = GetPlayerPed(source)
+    local pcoords = GetEntityCoords(playerPed)
+    print(pcoords, coords, #(pcoords - coords))
     if #(pcoords - coords) < 4.0 then
-        return ok
-    else    
-        DropPlayer(source, 'Too Far') return  end
-end
-
-function RemoveItem( item, amount) 
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    if Player.Functions.RemoveItem(item, amount) then 
-        TriggerClientEvent("inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount)
-        TriggerClientEvent("qb-inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount)
-    return true
-     else 
-        Notifys('You Need ' .. amount .. ' Of ' .. QBCore.Shared.Items[item].label .. ' To Do This', 'error')
-    end
-end
-
-function AddItem(item, amount) 
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    if Player.Functions.AddItem(item, amount) then 
-        TriggerClientEvent("inventory:client:ItemBox", src, QBCore.Shared.Items[item], "add", amount)
-        TriggerClientEvent("qb-inventory:client:ItemBox", src, QBCore.Shared.Items[item], "remove", amount)
         return true
-     else 
-        print('you sucks')
+    else    
+        DropPlayer(source, 'md-houseRobberies: You Were A Total Of ' .. #(pcoords - coords) .. ' Too Far Away To Trigger This Event') 
+        return false
     end
 end
+
+function checkTable(table)
+	local need = 0
+	local have = 0
+	for k, v in pairs (table) do 
+		need = need + 1
+		if Itemcheck(source, k, v) then have = have + 1  end
+	end
+	if need == have then
+		return true
+	else
+	end
+end
+
+function RemoveItem(source, item, amount) 
+    if inventory == 'qb' then
+        local Player = QBCore.Functions.GetPlayer(source)
+        if Player.Functions.RemoveItem(item, amount) then 
+            TriggerClientEvent(invname ..":client:ItemBox", source, QBCore.Shared.Items[item], "remove", amount)  
+            return true
+        else 
+            Notifys(source, 'You Need ' .. amount .. ' Of ' .. GetLabels(item) .. ' To Do This', 'error')
+        end
+    elseif inventory == 'ox' then
+        if exports.ox_inventory:RemoveItem(source, item, amount) then 
+            return true
+        else
+            Notifys(source, 'You Need ' .. amount .. ' Of ' .. GetLabels(item) .. ' To Do This', 'error')
+        end
+    end
+end
+
+function AddItem(source, item, amount) 
+    if inventory == 'qb' then
+        local Player = QBCore.Functions.GetPlayer(source)
+        if Player.Functions.AddItem(item, amount) then 
+            TriggerClientEvent(invname ..":client:ItemBox", source, QBCore.Shared.Items[item], "add", amount) 
+            return true
+         else 
+            print('Failed To Give Item: ' .. item .. ' Check Your qb-core/shared/items.lua')
+            return false
+        end
+    else
+        local carry = exports.ox_inventory:CanCarryItem(source, item, amount)
+        if not carry then Notifys(source, 'You Cant Carry that Much Weight!', 'error') return false end
+        if exports.ox_inventory:AddItem(source, item, amount) then
+            return true
+        else
+            print('Failed To Give Item: ' .. item .. ' Check Your ox_inventory/data/items.lua')
+            return false
+        end
+    end
+end
+
+function GetName(source) 
+    local Player = QBCore.Functions.GetPlayer(source) 
+        return Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname
+    
+end
+
+
+function ChecknRemove(source, table) 
+    local Player = QBCore.Functions.GetPlayer(source) 
+    local hass = 0
+    local need = 0
+    for k, v in pairs (table) do
+        need = need + 1 
+        if inventory == 'qb' then
+            local itemchecks = Player.Functions.GetItemByName(k)
+            if itemchecks and itemchecks.amount >= v then
+                hass = hass + 1
+            else 
+                Notifys(source, 'You Need ' .. v .. ' Of ' .. GetLabels(k)  .. ' To Do this', 'error')
+            end
+        elseif inventory == 'ox' then
+           local has = exports.ox_inventory:GetItem(source, k , nil, true)
+            if has.count >= v then 
+                hass = hass + 1
+            else
+                Notifys(source, 'You Need ' .. v .. ' Of ' .. GetLabels(k) .. ' To Do This', 'error')
+            end
+        end
+    end
+    if hass == need then 
+        for k, v in pairs (table) do 
+            RemoveItem(source, k, v) 
+        end
+        return true
+    else
+        return false
+    end
+end
+
 
 lib.callback.register('md-houserobberies:server:GetCoppers', function(source, cb, args)
     local amount = 0

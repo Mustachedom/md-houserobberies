@@ -1,13 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-
 local progressbartype = Config.progressbartype 
-local minigametype = Config.minigametype
-local notifytype = Config.Notify 
-local dispatch = Config.Dispatch
-
-
-local progressbartype = Config.progressbartype 
-local minigametype = Config.minigametype
+local minigametype = 1
 local notifytype = Config.Notify 
 local dispatch = Config.Dispatch
 
@@ -35,7 +28,7 @@ function progressbar(text, time, anim)
 	local test = false
 		local cancelled = false
 	  QBCore.Functions.Progressbar("drink_something", text, time, false, true, { disableMovement = true, disableCarMovement = true, disableMouse = false, disableCombat = true, disableInventory = true,
-	  }, {}, {}, {}, function()-- Done
+	  }, {}, {}, {}, function()
 		test = true
 		if GetResourceState('scully_emotemenu') == 'started' then
 			exports.scully_emotemenu:cancelEmote()
@@ -59,26 +52,155 @@ function progressbar(text, time, anim)
 	end	  
   end
 
-function minigame(num1, num2)
-    local check
-	if minigametype == 'ps' then
-    	exports['ps-ui']:Circle(function(success)
-        	check = success
-    	end, num1, num2) 
-    	return check
-	elseif minigametype == 'ox' then
-		num1 = 'easy'
-		if num2 <= 6 then num2 = 'hard' elseif num2 >= 7 and num2 <= 12 then num2 = 'medium' else num2 = 'easy' end
-		local success = lib.skillCheck({num1, num2}, {'1', '2', '3', '4'})
-		return success 
-    elseif minigametype == 'none' then
-		return true
-	else	
-		
-        print"dude, it literally tells you what you need to set it as in the config"
-    end
-end
+  function minigame(tier)
+	local game = Config.Minigames
+	 if Config.Tiergames[tier] == 'ps_circle' then
+		 local check 
+		 exports['ps-ui']:Circle(function(success)
+			 check = success
+		 end, game['ps'].amount, game['ps'].speed) 
+		 return check
+	elseif Config.Tiergames[tier] == 'ps_maze' then
+		local check 
+		exports['ps-ui']:Maze(function(success)
+			check = success
+		end, game['timelimit'])
+		return check
+	elseif Config.Tiergames[tier] == 'ps_scrambler' then
+		local check 
+		exports['ps-ui']:Scrambler(function(success)
+			check = success
+		end, game['type'],  game['time'], game['mirrorerd'])
+		return check
+	elseif Config.Tiergames[tier] == 'ps_var' then
+		local check 
+		exports['ps-ui']:VarHack(function(success)
+			check = success
+		end, game['numBlocks'],  game['time'])
+		return check
+	elseif Config.Tiergames[tier] == 'ps_thermite' then
+		local check 
+		exports['ps-ui']:Thermite(function(success)
+			check = success
+		end, game['time'],  game['gridsize'], game['incorrect'])
+		return check
+	 elseif Config.Tiergames[tier] == 'ox' then
+		 local success = lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
+		 return success 
+	 elseif Config.Tiergames[tier] == 'blcirprog' then
+		 local success = exports.bl_ui:CircleProgress(game['blcirprog'].amount, game['blcirprog'].speed)
+		 return success
+	 elseif Config.Tiergames[tier] == 'blprog' then
+		 local success = exports.bl_ui:Progress(game['blprog'].amount, game['blprog'].speed)
+		 return success
+	 elseif Config.Tiergames[tier] == 'blkeyspam' then
+		 local success = exports.bl_ui:KeySpam(game['blkeyspam'].amount, game['blprog'].difficulty)
+		 return success
+	 elseif Config.Tiergames[tier] == 'blkeycircle' then
+		 local success = exports.bl_ui:KeyCircle(game['blkeycircle'].amount, game['blkeycircle'].difficulty, game['blkeycircle'].keynumbers)
+		 return success	
+	 elseif Config.Tiergames[tier] == 'blnumberslide' then
+		 local success = exports.bl_ui:NumberSlide(game['blnumberslide'].amount, game['blnumberslide'].difficulty, game['blnumberslide'].keynumbers)
+		 return success	
+	 elseif Config.Tiergames[tier] == 'blrapidlines' then
+		 local success = exports.bl_ui:RapidLines(game['blrapidlines'].amount, game['blrapidlines'].difficulty, game['blrapidlines'].numberofline)
+		 return success	
+	 elseif Config.Tiergames[tier] == 'blcircleshake' then
+		 local success = exports.bl_ui:CircleShake(game['blcircleshake'].amount, game['blcircleshake'].difficulty, game['blcircleshake'].stages)
+		 return success	
+	 elseif Config.Tiergames[tier] == 'glpath' then 
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then return true else return false end	
+		 end, "path", game['glpath'])
+	 elseif Config.Tiergames[tier] == 'glspot' then
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then return true else return false end	
+		 end, "spot", game['glspot'])
+	 elseif Config.Tiergames[tier] == 'glmath' then
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then return true else return false end	
+		 end, "math", game['glmath'])
+	 elseif Config.Tiergames[tier] == 'none' then 
+		 return true			
+	 else	
+			print"^1 SCRIPT ERROR: Md-HouseRobberies set your minigame with one of the options!"
+	 end
+ end
 
+ function minigame2(tier)
+	local game = Config.Minigames
+	 if Config.HouseHacks[tier] == 'ps_circle' then
+		 local check 
+		 exports['ps-ui']:Circle(function(success)
+			 check = success
+		 end, game['ps'].amount, game['ps'].speed) 
+		 return check
+	elseif Config.HouseHacks[tier] == 'ps_maze' then
+		local check 
+		exports['ps-ui']:Maze(function(success)
+			check = success
+		end, game['timelimit'])
+		return check
+	elseif Config.HouseHacks[tier] == 'ps_scrambler' then
+		local check 
+		exports['ps-ui']:Scrambler(function(success)
+			check = success
+		end, game['type'],  game['time'], game['mirrorerd'])
+		return check
+	elseif Config.HouseHacks[tier] == 'ps_var' then
+		local check 
+		exports['ps-ui']:VarHack(function(success)
+			check = success
+		end, game['numBlocks'],  game['time'])
+		return check
+	elseif Config.HouseHacks[tier] == 'ps_thermite' then
+		local check 
+		exports['ps-ui']:Thermite(function(success)
+			check = success
+		end, game['time'],  game['gridsize'], game['incorrect'])
+		return check
+	 elseif Config.HouseHacks[tier] == 'ox' then 
+		 local success = lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
+		 return success 
+	 elseif Config.HouseHacks[tier] == 'blcirprog' then
+		 local success = exports.bl_ui:CircleProgress(game['blcirprog'].amount, game['blcirprog'].speed)
+		 return success
+	 elseif Config.HouseHacks[tier] == 'blprog' then
+		 local success = exports.bl_ui:Progress(game['blprog'].amount, game['blprog'].speed)
+		 return success
+	 elseif Config.HouseHacks[tier] == 'blkeyspam' then
+		 local success = exports.bl_ui:KeySpam(game['blkeyspam'].amount, game['blprog'].difficulty)
+		 return success
+	 elseif Config.HouseHacks[tier] == 'blkeycircle' then
+		 local success = exports.bl_ui:KeyCircle(game['blkeycircle'].amount, game['blkeycircle'].difficulty, game['blkeycircle'].keynumbers)
+		 return success	
+	 elseif Config.HouseHacks[tier] == 'blnumberslide' then
+		 local success = exports.bl_ui:NumberSlide(game['blnumberslide'].amount, game['blnumberslide'].difficulty, game['blnumberslide'].keynumbers)
+		 return success	
+	 elseif Config.HouseHacks[tier] == 'blrapidlines' then
+		 local success = exports.bl_ui:RapidLines(game['blrapidlines'].amount, game['blrapidlines'].difficulty, game['blrapidlines'].numberofline)
+		 return success	
+	 elseif Config.HouseHacks[tier] == 'blcircleshake' then
+		 local success = exports.bl_ui:CircleShake(game['blcircleshake'].amount, game['blcircleshake'].difficulty, game['blcircleshake'].stages)
+		 return success	
+	 elseif Config.HouseHacks[tier] == 'glpath' then 
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then return true else return false end	
+		 end, "path", game['glpath'])
+	 elseif Config.HouseHacks[tier] == 'glspot' then
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then return true else return false end	
+		 end, "spot", game['glspot'])
+	 elseif Config.HouseHacks[tier] == 'glmath' then
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then return true else return false end	
+		 end, "math", game['glmath'])
+	 elseif Config.HouseHacks[tier] == 'none' then 
+		 return true			
+	 else	
+			print"^1 SCRIPT ERROR: Md-HouseRobberies set your minigame with one of the options!"
+	 end
+ end
 
  function Notify(text, type)
 	if notifytype =='ox' then
@@ -139,6 +261,24 @@ else
 end
 end
 
+function ItemCheckMulti(item)
+	local need = 0
+	local has = 0
+	for k,v in pairs (item) do 
+		need = need + 1
+		if GetResourceState('ox_inventory') == 'started' then
+			if exports.ox_inventory:GetItemCount(v) >= 1 then has = has + 1 else Notify('You Need ' .. GetLabel(v) .. " !", 'error') end
+		else
+			if QBCore.Shared.Items[v] == nil then print("There Is No " .. item .. " In Your QB Items.lua") return end
+			if QBCore.Functions.HasItem(v) then has = has + 1  else Notify('You Need ' .. QBCore.Shared.Items[v].label .. " !", 'error') end
+		end
+	end
+	if need == has then 
+		return true
+	else
+		return false
+	end
+end
 
 function PoliceCall(chance)
 	local math = math.random(1,100)
@@ -193,4 +333,163 @@ function Freeze(entity, toggle, head)
         FreezeEntityPosition(entity, toggle)
         SetEntityHeading(entity, head)
 		SetBlockingOfNonTemporaryEvents(entity, toggle)
+end
+
+function tele(coords) 
+	DoScreenFadeOut(500)
+	Wait(1000)
+	SetEntityCoords(PlayerPedId(),coords.x, coords.y, coords.z)
+	Wait(1000)
+	DoScreenFadeIn(500)
+end
+
+
+function AddBoxZoneSingle(name, loc, data)
+	if Config.Target == 'qb' then
+		exports['qb-target']:AddBoxZone(name, loc, 1.5, 1.75, {name = name, minZ = loc.z-1,maxZ = loc.z +1}, 
+		{ options = {
+			{
+			  
+			  type = data.type or nil, 
+			  event = data.event or nil,
+			  action = data.action or nil,
+			  icon = data.icon, 
+			  label = data.label,
+			  data = data.data,
+			  canInteract = data.canInteract,
+			}
+		}, 
+		distance = 2.0
+	 })
+	elseif Config.Target == 'ox' then
+		exports.ox_target:addBoxZone({coords = loc, size = vec3(1,1,1), options = {
+			{
+			  type = data.type or nil, 
+			  event = data.event or nil,
+			  onSelect = data.action or nil,
+			  distance = 2.5,
+			  icon = data.icon, 
+			  label = data.label,
+			  data = data.data,
+			  canInteract = data.canInteract,
+			}
+		}, })
+	end
+end
+
+function AddBoxZoneMulti(name, table, data) 
+	for k, v in pairs (table) do
+		if v.gang == nil or v.gang == '' or v.gang == "" then v.gang = 1 end
+		if Config.Target == 'qb' then
+			exports['qb-target']:AddBoxZone(name .. k, v.loc, 1.5, 1.75, {name = name..k, minZ = v.loc.z-1.50,maxZ = v.loc.z +1.5}, 
+			{ options = {
+				{
+				  type = data.type or nil, 
+				  event = data.event or nil,
+				  action = data.action or nil,
+				  icon = data.icon, 
+				  label = data.label,
+				  data = k,
+				  canInteract = data.canInteract or function()
+					if QBCore.Functions.GetPlayerData().gang.name == v.gang or v.gang == 1 then return true end end
+				}
+			}, 
+			distance = 2.5
+		 })
+		elseif Config.Target == 'ox' then
+			exports.ox_target:addBoxZone({coords = v.loc, size = vec3(1,1,1), options = {
+				{
+				  type = data.type or nil, 
+				  event = data.event or nil,
+				  onSelect = data.action or nil,
+				  icon = data.icon, 
+				  label = data.label,
+				  data = k,
+				  distance = 2.5,
+				  canInteract = data.canInteract or function()
+					if QBCore.Functions.GetPlayerData().gang.name == v.gang or v.gang == 1 then return true end end
+				}
+			}, })
+		end
+	end
+end
+
+function AddSingleModel(model, data, num)
+	if Config.Target == 'qb' then
+		exports['qb-target']:AddTargetEntity(model, {options = {
+			{icon = data.icon, label = data.label, event = data.event or nil, action = data.action or nil, data = num }
+		}, distance = 2.5})
+	elseif Config.Target == 'ox' then
+		exports.ox_target:addLocalEntity(model, {icon = data.icon, label = data.label, event = data.event or nil, onSelect = data.action or nil, data = num, distance = 2.5 })
+	end
+end
+
+function AddMultiModel(model, data, num)
+	if Config.Target == 'qb' then
+		exports['qb-target']:AddTargetEntity(model, {options = data, distance = 2.5})
+	elseif Config.Target == 'ox' then
+		exports.ox_target:addLocalEntity(model, data)
+	end
+end
+
+function AddBoxZoneMultiOptions(name, loc, data)
+	if Config.Target == 'qb' then
+		exports['qb-target']:AddBoxZone(name, loc, 1.5, 1.75, {name = name, minZ = loc.z-1,maxZ = loc.z +1}, { options = data, distance = 2.0})
+	elseif Config.Target == 'ox' then
+		exports.ox_target:addBoxZone({coords = loc, size = vec3(1,1,1), options = data })
+	end
+end
+
+local function SpawnHomeowner(k)
+    local chance = math.random(1,100)
+    local weaponchance = math.random(1,100)
+    if Config.pedspawnchance >= chance then
+        lib.requestModel(Config.Ped, 1000)
+        Wait(2000)
+		local loc = vector3(Config.Houses[k]['coords'].x  + Config.PedOff[Config.Houses[k]['tier']].x, Config.Houses[k]['coords'].y + Config.PedOff[Config.Houses[k]['tier']].y, Config.Houses[k]['coords'].z + Config.PedOff[Config.Houses[k]['tier']].z - 145 )
+       local homeowner = CreatePed(0, Config.Ped, loc.x, loc.y, loc.z, 0.0, true, false)
+         if weaponchance <= Config.weapononechance then GiveWeaponToPed(homeowner, Config.Weaponone, 1, false, true) else  GiveWeaponToPed(homeowner, Config.Weapontwo, 1, false, true) end
+         TaskCombatPed(homeowner, PlayerPedId(), 0, 16)
+         SetPedCombatAttributes(homeowner, 46, true)
+         SetPedAccuracy(homeowner,50)
+         SetPedArmour(homeowner, 100)
+         AddSingleModel(homeowner, 
+         {
+            label = 'Dispose Of Body', 
+            icon = 'fas fa-example', 
+            action = function()
+            if GetSelectedPedWeapon(PlayerPedId()) == `weapon_knife` then
+               if not progressbar("Disposing Of Body", 5000,'mechanic4') then return end
+                DeleteEntity(homeowner)
+            else
+               Notify("You Think You Can Dispose Of Him With Your Hands, idiot, Grab A knife", "error")
+            end    
+         end,
+         canInteract = function()
+             if IsEntityDead(homeowner) then return true end end
+        }, homeowner)
+    end
+end   
+
+function BreakIn(k)
+if not GetCops(Config.MinCops) then	return end						
+if Config.Houses[k]['tier'] <= 4  then
+	if not ItemCheck('lockpick') then return end
+	if not minigame2(Config.Houses[k]['tier']) then return end
+	   TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+	   SpawnHomeowner(k)
+		PoliceCall(Config.AlertPolice)
+elseif Config.Houses[k]['tier'] == 5 then
+	if not ItemCheck('houselaptop') then return end
+	if not minigame2(Config.Houses[k]['tier']) then TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] ) return end
+		TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+		SpawnHomeowner(k)
+		PoliceCall(Config.AlertPolice)
+elseif Config.Houses[k]['tier'] == 6 then
+	if not ItemCheck('houselaptop') then return end
+	if not minigame2(Config.Houses[k]['tier']) then TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] ) return end
+		TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+		SpawnHomeowner(k)
+		PoliceCall(Config.AlertPolice)
+end
 end
