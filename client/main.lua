@@ -122,7 +122,7 @@ CreateThread(function()
                     action = function()     enterRobberyHouse(k) end, 
                     onSelect = function()     enterRobberyHouse(k) end, 
                     canInteract = function()
-                        if Config.Houses[k]['spawned']  and QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
+                        if Config.Houses[k]['spawned']  then return true end end
                 },
                 {
                     name = 'makesmoke',
