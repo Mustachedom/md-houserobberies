@@ -1,27 +1,15 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-RegisterNetEvent('md-houserobbery:server:accessbreak', function(tier)
+RegisterNetEvent('md-houserobbery:server:accessbreak', function(tier, item)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     local info = Player.PlayerData.charinfo
     local luck = math.random(1,100)
     local playerCoords = GetEntityCoords(GetPlayerPed(src))
-    if tier <= 4 then 
-        if luck <= 20 then 
-           RemoveItem(src,'lockpick', 1)
-           Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Broke A Lockpick At A Tier ' .. tier .. ' House At ' .. playerCoords .. '!', 'break')
-        end
-    elseif tier == 5 then 
-        if luck <= 45 then 
-           RemoveItem(src,'houselaptop', 1)
-           Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Broke A House Laptop At A Tier ' .. tier .. ' House At ' .. playerCoords .. '!', 'break')
-        end
-    else
-        if luck <= 85 then 
-           RemoveItem(src, 'mansionlaptop', 1)
-           Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Broke A Mansion Laptop At A Tier ' .. tier .. ' House At ' .. playerCoords .. '!', 'break')
-        end 
+    if luck <= 20 then 
+        RemoveItem(src, item, 1)
     end
+    
 end)
 
 RegisterNetEvent('md-houserobberies:server:sellloot', function(itemName)

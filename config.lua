@@ -40,6 +40,14 @@ Config.HouseHacks = { -- change what minigame to use for breaking in  || names m
    'ox',-- tier 5
    'ox',-- tier 6
 }
+Config.LockpickItems = {
+    {item = 'lockpick',},
+    {item = 'lockpick',},
+    {item = 'lockpick',},
+    {item = 'lockpick',},
+    {item = 'houselaptop',},
+    {item = 'mansionlaptop',},
+}
 Config.Target = 'qb'
 ------------------------
 

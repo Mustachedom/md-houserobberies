@@ -58,31 +58,31 @@ function progressbar(text, time, anim)
 		 local check 
 		 exports['ps-ui']:Circle(function(success)
 			 check = success
-		 end, game['ps'].amount, game['ps'].speed) 
+		 end, game['ps_circle '].amount, game['ps_circle '].speed) 
 		 return check
 	elseif Config.Tiergames[tier] == 'ps_maze' then
 		local check 
 		exports['ps-ui']:Maze(function(success)
 			check = success
-		end, game['timelimit'])
+		end, game['ps_maze '].timelimit)
 		return check
 	elseif Config.Tiergames[tier] == 'ps_scrambler' then
 		local check 
 		exports['ps-ui']:Scrambler(function(success)
 			check = success
-		end, game['type'],  game['time'], game['mirrorerd'])
+		end, game['ps_scrambler '].type,  game['ps_scrambler '].time, game['ps_scrambler '].mirrored)
 		return check
 	elseif Config.Tiergames[tier] == 'ps_var' then
 		local check 
 		exports['ps-ui']:VarHack(function(success)
 			check = success
-		end, game['numBlocks'],  game['time'])
+		end, game['ps_var '].numBlocks,  game['ps_var '].time)
 		return check
 	elseif Config.Tiergames[tier] == 'ps_thermite' then
 		local check 
 		exports['ps-ui']:Thermite(function(success)
 			check = success
-		end, game['time'],  game['gridsize'], game['incorrect'])
+		end, game['ps_thermite'].time,  game['ps_thermite'].gridsize, game['ps_thermite'].incorrect)
 		return check
 	 elseif Config.Tiergames[tier] == 'ox' then
 		 local success = lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
@@ -129,36 +129,35 @@ function progressbar(text, time, anim)
 
  function minigame2(tier)
 	local game = Config.Minigames
-	 if Config.HouseHacks[tier] == 'ps_circle' then
-		 local check 
-		 exports['ps-ui']:Circle(function(success)
-			 check = success
-		 end, game['ps'].amount, game['ps'].speed) 
-		 return check
-	elseif Config.HouseHacks[tier] == 'ps_maze' then
+	if Config.HouseHacks[tier] == 'ps_circle' then
 		local check 
-		exports['ps-ui']:Maze(function(success)
+		exports['ps-ui']:Circle(function(success)
 			check = success
-		end, game['timelimit'])
+		end, game['ps_circle '].amount, game['ps_circle '].speed) 
 		return check
-	elseif Config.HouseHacks[tier] == 'ps_scrambler' then
-		local check 
-		exports['ps-ui']:Scrambler(function(success)
-			check = success
-		end, game['type'],  game['time'], game['mirrorerd'])
-		return check
-	elseif Config.HouseHacks[tier] == 'ps_var' then
-		local check 
-		exports['ps-ui']:VarHack(function(success)
-			check = success
-		end, game['numBlocks'],  game['time'])
-		return check
-	elseif Config.HouseHacks[tier] == 'ps_thermite' then
-		local check 
-		exports['ps-ui']:Thermite(function(success)
-			check = success
-		end, game['time'],  game['gridsize'], game['incorrect'])
-		return check
+   elseif Config.HouseHacks[tier] == 'ps_maze' then
+	   local check 
+	   exports['ps-ui']:Maze(function(success)
+		   check = success
+	   end, game['ps_maze '].timelimit)
+	   return check
+   elseif Config.HouseHacks[tier] == 'ps_scrambler' then
+	   local check 
+	   exports['ps-ui']:Scrambler(function(success)
+		   check = success
+	   end, game['ps_scrambler '].type,  game['ps_scrambler '].time, game['ps_scrambler '].mirrored)
+	   return check
+   elseif Config.HouseHacks[tier] == 'ps_var' then
+	   local check 
+	   exports['ps-ui']:VarHack(function(success)
+		   check = success
+	   end, game['ps_var '].numBlocks,  game['ps_var '].time)
+	   return check
+   elseif Config.HouseHacks[tier] == 'ps_thermite' then
+	   local check 
+	   exports['ps-ui']:Thermite(function(success)
+		   check = success
+	   end, game['ps_thermite'].time,  game['ps_thermite'].gridsize, game['ps_thermite'].incorrect)
 	 elseif Config.HouseHacks[tier] == 'ox' then 
 		 local success = lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
 		 return success 
@@ -472,24 +471,12 @@ local function SpawnHomeowner(k)
 end   
 
 function BreakIn(k)
-if not GetCops(Config.MinCops) then	return end						
-if Config.Houses[k]['tier'] <= 4  then
-	if not ItemCheck('lockpick') then return end
-	if not minigame2(Config.Houses[k]['tier']) then return end
-	   TriggerServerEvent('md-houserobbery:server:enterHouse', k)
-	   SpawnHomeowner(k)
-		PoliceCall(Config.AlertPolice)
-elseif Config.Houses[k]['tier'] == 5 then
-	if not ItemCheck('houselaptop') then return end
-	if not minigame2(Config.Houses[k]['tier']) then TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] ) return end
-		TriggerServerEvent('md-houserobbery:server:enterHouse', k)
-		SpawnHomeowner(k)
-		PoliceCall(Config.AlertPolice)
-elseif Config.Houses[k]['tier'] == 6 then
-	if not ItemCheck('houselaptop') then return end
-	if not minigame2(Config.Houses[k]['tier']) then TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'] ) return end
-		TriggerServerEvent('md-houserobbery:server:enterHouse', k)
-		SpawnHomeowner(k)
-		PoliceCall(Config.AlertPolice)
-end
+if not GetCops(Config.MinCops) then	return end		
+local tier = Config.Houses[k]['tier']				
+if not ItemCheck(Config.LockpickItems[tier].item) then return end
+if not minigame2(Config.Houses[k]['tier']) then TriggerServerEvent('md-houserobbery:server:accessbreak', Config.Houses[k]['tier'], Config.LockpickItems[tier].item ) return end
+	TriggerServerEvent('md-houserobbery:server:enterHouse', k)
+	SpawnHomeowner(k)
+	PoliceCall(Config.AlertPolice)
+
 end
