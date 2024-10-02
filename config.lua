@@ -74,9 +74,9 @@ Config.FenceWeapontwo = "weapon_rpg"-- what weapon the fence gets when you assau
 Config.OffSet = {
   {x = -1.5, y = -2.0, z = 3.0},     -- tier 1
   {x = -1.7, y = -1.0, z = 1.0},     -- tier 2
-  {x = 0.0, y = -3.5, z = 3.0},      -- tier 3
+  {x = -0.1, y = -3.8, z = 3.0},      -- tier 3
   {x = 1.8, y = -10.0, z = 1.0},     -- tier 4
-  {x = 4.7, y = 3.9, z = 1.5},       -- tier 5
+  {x = 5.2, y = 4.5, z = 1.5},       -- tier 5
   {x = -10.0, y = 5.8, z = 10.5},    -- tier 6
 }
 
