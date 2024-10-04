@@ -457,13 +457,12 @@ end
 function AddSingleModel(model, data, num)
 	if Config.Target == 'qb' then
 		exports['qb-target']:AddTargetEntity(model, {options = {
-			{icon = data.icon, label = data.label, event = data.event or nil, action = data.action or nil, data = num }
+			{icon = data.icon, label = data.label, event = data.event or nil, action = data.action or nil, data = num, canInteract = data.canInteract }
 		}, distance = 2.5})
 	elseif Config.Target == 'ox' then
-		exports.ox_target:addLocalEntity(model, {icon = data.icon, label = data.label, event = data.event or nil, onSelect = data.action or nil, data = num, distance = 2.5 })
+		exports.ox_target:addLocalEntity(model, {icon = data.icon, label = data.label, event = data.event or nil, onSelect = data.action or nil, data = num, distance = 2.5, canInteract = data.canInteract })
 	end
 end
-
 function AddMultiModel(model, data, num)
 	if Config.Target == 'qb' then
 		exports['qb-target']:AddTargetEntity(model, {options = data, distance = 2.5})
