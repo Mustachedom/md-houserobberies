@@ -53,7 +53,7 @@ local function enterRobberyHouse(house)
                  label = "Steal Loot",
                  action = function()
                      TriggerServerEvent('md-houserobbery:server:setlootstatebusy', house, v.num, true)
-                     if not progressbar("Stealing", math.random(Config.MinRobTime, Config.MaxRobTIme), 'uncuff') then return end
+                     if not progressbar("Stealing", math.random(Config.MinRobTime, Config.MaxRobTime), 'uncuff') then return end
                      if not minigame(home.tier) then 
                          Notify("This Nerd Failed", "error")
                          TriggerServerEvent('md-houserobbery:server:setlootstatebusy', house, v.num, false)
