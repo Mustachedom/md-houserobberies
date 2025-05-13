@@ -55,148 +55,190 @@ function progressbar(text, time, anim)
   function minigame(tier)
 	local time = 0
 	local game = Config.Minigames
-	local hack = Config.Tiergames[tier]
-
-	local ps_ui_map = {
-		ps_circle = function()
-			local check
-			exports['ps-ui']:Circle(function(success) check = success end, game['ps_circle'].amount, game['ps_circle'].speed)
-			return check
-		end,
-		ps_maze = function()
-			local check
-			exports['ps-ui']:Maze(function(success) check = success end, game['ps_maze'].timelimit)
-			return check
-		end,
-		ps_scrambler = function()
-			local check
-			exports['ps-ui']:Scrambler(function(success) check = success end, game['ps_scrambler'].type, game['ps_scrambler'].time, game['ps_scrambler'].mirrored)
-			return check
-		end,
-		ps_var = function()
-			local check
-			exports['ps-ui']:VarHack(function(success) check = success end, game['ps_var'].numBlocks, game['ps_var'].time)
-			return check
-		end,
-		ps_thermite = function()
-			local check
-			exports['ps-ui']:Thermite(function(success) check = success end, game['ps_thermite'].time, game['ps_thermite'].gridsize, game['ps_thermite'].incorrect)
-			return check
-		end
-	}
-
-	if ps_ui_map[hack] then
-		return ps_ui_map[hack]()
-	elseif hack == 'ox' then
-		return lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
-	end
-
-	local bl_ui_map = {
-		blcirprog = function() return exports.bl_ui:CircleProgress(game['blcirprog'].amount, game['blcirprog'].speed) end,
-		blprog = function() return exports.bl_ui:Progress(game['blprog'].amount, game['blprog'].speed) end,
-		blkeyspam = function() return exports.bl_ui:KeySpam(game['blkeyspam'].amount, game['blprog'].difficulty) end,
-		blkeycircle = function() return exports.bl_ui:KeyCircle(game['blkeycircle'].amount, game['blkeycircle'].difficulty, game['blkeycircle'].keynumbers) end,
-		blnumberslide = function() return exports.bl_ui:NumberSlide(game['blnumberslide'].amount, game['blnumberslide'].difficulty, game['blnumberslide'].keynumbers) end,
-		blrapidlines = function() return exports.bl_ui:RapidLines(game['blrapidlines'].amount, game['blrapidlines'].difficulty, game['blrapidlines'].numberofline) end,
-		blcircleshake = function() return exports.bl_ui:CircleShake(game['blcircleshake'].amount, game['blcircleshake'].difficulty, game['blcircleshake'].stages) end
-	}
-
-	if bl_ui_map[hack] then
-		return bl_ui_map[hack]()
-	elseif hack == 'glpath' then
+	if Config.Tiergames[tier] == 'ps_circle' then
+		local check 
+		exports['ps-ui']:Circle(function(success)
+			check = success
+		end, game['ps_circle'].amount, game['ps_circle'].speed) 
+		return check
+   elseif Config.Tiergames[tier] == 'ps_maze' then
+	   local check 
+	   exports['ps-ui']:Maze(function(success)
+		   check = success
+	   end, game['ps_maze'].timelimit)
+	   return check
+   elseif Config.Tiergames[tier] == 'ps_scrambler' then
+	   local check 
+	   exports['ps-ui']:Scrambler(function(success)
+		   check = success
+	   end, game['ps_scrambler'].type,  game['ps_scrambler'].time, game['ps_scrambler'].mirrored)
+	   return check
+   elseif Config.Tiergames[tier] == 'ps_var' then
+	   local check 
+	   exports['ps-ui']:VarHack(function(success)
+		   check = success
+	   end, game['ps_var'].numBlocks,  game['ps_var'].time)
+	   return check
+   elseif Config.Tiergames[tier] == 'ps_thermite' then
+	   local check 
+	   exports['ps-ui']:Thermite(function(success)
+		   check = success
+	   end, game['ps_thermite'].time,  game['ps_thermite'].gridsize, game['ps_thermite'].incorrect)
+	   return check
+	elseif Config.Tiergames[tier] == 'ox' then
+		local success = lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
+		return success 
+	elseif Config.Tiergames[tier] == 'blcirprog' then
+		local success = exports.bl_ui:CircleProgress(game['blcirprog'].amount, game['blcirprog'].speed)
+		return success
+	elseif Config.Tiergames[tier] == 'blprog' then
+		local success = exports.bl_ui:Progress(game['blprog'].amount, game['blprog'].speed)
+		return success
+	elseif Config.Tiergames[tier] == 'blkeyspam' then
+		local success = exports.bl_ui:KeySpam(game['blkeyspam'].amount, game['blprog'].difficulty)
+		return success
+	elseif Config.Tiergames[tier] == 'blkeycircle' then
+		local success = exports.bl_ui:KeyCircle(game['blkeycircle'].amount, game['blkeycircle'].difficulty, game['blkeycircle'].keynumbers)
+		return success	
+	elseif Config.Tiergames[tier] == 'blnumberslide' then
+		local success = exports.bl_ui:NumberSlide(game['blnumberslide'].amount, game['blnumberslide'].difficulty, game['blnumberslide'].keynumbers)
+		return success	
+	elseif Config.Tiergames[tier] == 'blrapidlines' then
+		local success = exports.bl_ui:RapidLines(game['blrapidlines'].amount, game['blrapidlines'].difficulty, game['blrapidlines'].numberofline)
+		return success	
+	elseif Config.Tiergames[tier] == 'blcircleshake' then
+		local success = exports.bl_ui:CircleShake(game['blcircleshake'].amount, game['blcircleshake'].difficulty, game['blcircleshake'].stages)
+		return success	
+	elseif Config.Tiergames[tier] == 'glpath' then 
 		local settings = {gridSize = game['glpath'].gridSize, lives = game['glpath'].lives, timeLimit = game['glpath'].timelimit}
 		local successes = false
-		exports["glow_minigames"]:StartMinigame(function(success) successes = success end, "path", settings)
-		repeat Wait(1000) time = time + 1 until successes or time == 100
-		if successes then return true end
-	elseif hack == 'glspot' then
-		local settings = {gridSize = game['glspot'].gridSize, timeLimit = game['glspot'].gridSize, charSet = game['glspot'].charSet, required = game['glspot'].required}
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then successes = true else successes = false  end
+		 end, "path", settings)
+		 repeat
+			Wait(1000)
+			time = time + 1
+		 until successes or time == 100
+		 if successes then return true end
+	elseif Config.Tiergames[tier] == 'glspot' then
+		local settings = {gridSize = game['glspot'].gridSize, timeLimit = game['glspot'].gridSize, charSet =  game['glspot'].charSet, required = game['glspot'].required}
 		local successes = false
-		exports["glow_minigames"]:StartMinigame(function(success) successes = success end, "spot", settings)
-		repeat Wait(1000) time = time + 1 until successes or time == 100
-	elseif hack == 'glmath' then
-		local settings = {timeLimit = game['glmath'].timeLimit}
+		exports["glow_minigames"]:StartMinigame(function(success)
+		   if success then successes = true else successes = false  end
+		end, "spot", settings)
+		repeat
+		   Wait(1000)
+		   time = time + 1
+		until successes or time == 100
+	elseif Config.Tiergames[tier] == 'glmath' then
+		local settings = {timeLimit  = game['glmath'].timeLimit}
 		local successes = false
-		exports["glow_minigames"]:StartMinigame(function(success) successes = success end, "math", settings)
-		repeat Wait(1000) time = time + 1 until successes or time == 100
-	elseif hack == 'none' then
-		return true
-	else
-		print("^1 SCRIPT ERROR: Md-HouseRobberies set your minigame with one of the options!")
+		exports["glow_minigames"]:StartMinigame(function(success)
+		   if success then successes = true else successes = false  end
+		end, "math", settings)
+		repeat
+		   Wait(1000)
+		   time = time + 1
+		until successes or time == 100
+	elseif Config.Tiergames[tier] == 'none' then 
+		return true			
+	else	
+		   print"^1 SCRIPT ERROR: Md-HouseRobberies set your minigame with one of the options!"
 	end
  end
 
  function minigame2(tier)
 	local game = Config.Minigames
-	local hack = Config.HouseHacks[tier]
 	local time = 0
-
-	local ps_ui_map = {
-		ps_circle = function()
-			local check
-			exports['ps-ui']:Circle(function(success) check = success end, game['ps_circle'].amount, game['ps_circle'].speed)
-			return check
-		end,
-		ps_maze = function()
-			local check
-			exports['ps-ui']:Maze(function(success) check = success end, game['ps_maze'].timelimit)
-			return check
-		end,
-		ps_scrambler = function()
-			local check
-			exports['ps-ui']:Scrambler(function(success) check = success end, game['ps_scrambler'].type, game['ps_scrambler'].time, game['ps_scrambler'].mirrored)
-			return check
-		end,
-		ps_var = function()
-			local check
-			exports['ps-ui']:VarHack(function(success) check = success end, game['ps_var'].numBlocks, game['ps_var'].time)
-			return check
-		end,
-		ps_thermite = function()
-			local check
-			exports['ps-ui']:Thermite(function(success) check = success end, game['ps_thermite'].time, game['ps_thermite'].gridsize, game['ps_thermite'].incorrect)
-			return check
-		end
-	}
-
-	if ps_ui_map[hack] then
-		return ps_ui_map[hack]()
-	elseif hack == 'ox' then
-		return lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
-	end
-
-	local bl_ui_map = {
-		blcirprog = function() return exports.bl_ui:CircleProgress(game['blcirprog'].amount, game['blcirprog'].speed) end,
-		blprog = function() return exports.bl_ui:Progress(game['blprog'].amount, game['blprog'].speed) end,
-		blkeyspam = function() return exports.bl_ui:KeySpam(game['blkeyspam'].amount, game['blprog'].difficulty) end,
-		blkeycircle = function() return exports.bl_ui:KeyCircle(game['blkeycircle'].amount, game['blkeycircle'].difficulty, game['blkeycircle'].keynumbers) end,
-		blnumberslide = function() return exports.bl_ui:NumberSlide(game['blnumberslide'].amount, game['blnumberslide'].difficulty, game['blnumberslide'].keynumbers) end,
-		blrapidlines = function() return exports.bl_ui:RapidLines(game['blrapidlines'].amount, game['blrapidlines'].difficulty, game['blrapidlines'].numberofline) end,
-		blcircleshake = function() return exports.bl_ui:CircleShake(game['blcircleshake'].amount, game['blcircleshake'].difficulty, game['blcircleshake'].stages) end
-	}
-
-	if bl_ui_map[hack] then
-		return bl_ui_map[hack]()
-	elseif hack == 'glpath' then
+	if Config.HouseHacks[tier] == 'ps_circle' then
+		local check 
+		exports['ps-ui']:Circle(function(success)
+			check = success
+		end, game['ps_circle'].amount, game['ps_circle'].speed) 
+		return check
+   elseif Config.HouseHacks[tier] == 'ps_maze' then
+	   local check 
+	   exports['ps-ui']:Maze(function(success)
+		   check = success
+	   end, game['ps_maze'].timelimit)
+	   return check
+   elseif Config.HouseHacks[tier] == 'ps_scrambler' then
+	   local check 
+	   exports['ps-ui']:Scrambler(function(success)
+		   check = success
+	   end, game['ps_scrambler'].type,  game['ps_scrambler'].time, game['ps_scrambler'].mirrored)
+	   return check
+   elseif Config.HouseHacks[tier] == 'ps_var' then
+	   local check 
+	   exports['ps-ui']:VarHack(function(success)
+		   check = success
+	   end, game['ps_var'].numBlocks,  game['ps_var'].time)
+	   return check
+   elseif Config.HouseHacks[tier] == 'ps_thermite' then
+	   local check 
+	   exports['ps-ui']:Thermite(function(success)
+		   check = success
+	   end, game['ps_thermite'].time,  game['ps_thermite'].gridsize, game['ps_thermite'].incorrect)
+	   return check
+	elseif Config.HouseHacks[tier] == 'ox' then
+		local success = lib.skillCheck(game['ox'], {'1', '2', '3', '4'})
+		return success 
+	elseif Config.HouseHacks[tier] == 'blcirprog' then
+		local success = exports.bl_ui:CircleProgress(game['blcirprog'].amount, game['blcirprog'].speed)
+		return success
+	elseif Config.HouseHacks[tier] == 'blprog' then
+		local success = exports.bl_ui:Progress(game['blprog'].amount, game['blprog'].speed)
+		return success
+	elseif Config.HouseHacks[tier] == 'blkeyspam' then
+		local success = exports.bl_ui:KeySpam(game['blkeyspam'].amount, game['blprog'].difficulty)
+		return success
+	elseif Config.HouseHacks[tier] == 'blkeycircle' then
+		local success = exports.bl_ui:KeyCircle(game['blkeycircle'].amount, game['blkeycircle'].difficulty, game['blkeycircle'].keynumbers)
+		return success	
+	elseif Config.HouseHacks[tier] == 'blnumberslide' then
+		local success = exports.bl_ui:NumberSlide(game['blnumberslide'].amount, game['blnumberslide'].difficulty, game['blnumberslide'].keynumbers)
+		return success	
+	elseif Config.HouseHacks[tier] == 'blrapidlines' then
+		local success = exports.bl_ui:RapidLines(game['blrapidlines'].amount, game['blrapidlines'].difficulty, game['blrapidlines'].numberofline)
+		return success	
+	elseif Config.HouseHacks[tier] == 'blcircleshake' then
+		local success = exports.bl_ui:CircleShake(game['blcircleshake'].amount, game['blcircleshake'].difficulty, game['blcircleshake'].stages)
+		return success	
+	elseif Config.HouseHacks[tier] == 'glpath' then 
 		local settings = {gridSize = game['glpath'].gridSize, lives = game['glpath'].lives, timeLimit = game['glpath'].timelimit}
 		local successes = false
-		exports["glow_minigames"]:StartMinigame(function(success) successes = success end, "path", settings)
-		repeat Wait(1000) time = time + 1 until successes or time == 100
-		if successes then return true end
-	elseif hack == 'glspot' then
-		local settings = {gridSize = game['glspot'].gridSize, timeLimit = game['glspot'].gridSize, charSet = game['glspot'].charSet, required = game['glspot'].required}
+		 exports["glow_minigames"]:StartMinigame(function(success)
+			 if success then successes = true else successes = false  end
+		 end, "path", settings)
+		 repeat
+			Wait(1000)
+			time = time + 1
+		 until successes or time == 100
+		 if successes then return true end
+	elseif Config.HouseHacks[tier] == 'glspot' then
+		local settings = {gridSize = game['glspot'].gridSize, timeLimit = game['glspot'].gridSize, charSet =  game['glspot'].charSet, required = game['glspot'].required}
 		local successes = false
-		exports["glow_minigames"]:StartMinigame(function(success) successes = success end, "spot", settings)
-		repeat Wait(1000) time = time + 1 until successes or time == 100
-	elseif hack == 'glmath' then
-		local settings = {timeLimit = game['glmath'].timeLimit}
+		exports["glow_minigames"]:StartMinigame(function(success)
+		   if success then successes = true else successes = false  end
+		end, "spot", settings)
+		repeat
+		   Wait(1000)
+		   time = time + 1
+		until successes or time == 100
+	elseif Config.HouseHacks[tier] == 'glmath' then
+		local settings = {timeLimit  = game['glmath'].timeLimit}
 		local successes = false
-		exports["glow_minigames"]:StartMinigame(function(success) successes = success end, "math", settings)
-		repeat Wait(1000) time = time + 1 until successes or time == 100
-	elseif hack == 'none' then
-		return true
-	else
-		print("^1 SCRIPT ERROR: Md-HouseRobberies set your minigame with one of the options!")
+		exports["glow_minigames"]:StartMinigame(function(success)
+		   if success then successes = true else successes = false  end
+		end, "math", settings)
+		repeat
+		   Wait(1000)
+		   time = time + 1
+		until successes or time == 100
+	elseif Config.HouseHacks[tier] == 'none' then 
+		return true			
+	else	
+		   print"^1 SCRIPT ERROR: Md-HouseRobberies set your minigame with one of the options!"
 	end
  end
 
@@ -213,31 +255,30 @@ function progressbar(text, time, anim)
   end
 
 function GetImage(img)
-    local resource = GetResourceState
-    local qbItems = QBCore.Shared.Items
-    if resource('ox_inventory') == 'started' then
-        local Items = exports['ox_inventory']:Items()
-        local client = Items[img] and Items[img]['client']
-        if client and client['image'] then
-            return client['image']
-        end
-        return "nui://ox_inventory/web/images/" .. img .. ".png"
-    end
-
-    local inventoryMap = {
-        ['ps-inventory'] = "nui://ps-inventory/html/images/",
-        ['lj-inventory'] = "nui://lj-inventory/html/images/",
-        ['qb-inventory'] = "nui://qb-inventory/html/images/",
-        ['qs-inventory'] = "nui://qs-inventory/html/img/",
-        ['origen_inventory'] = "nui://origen_inventory/html/img/",
-        ['core_inventory'] = "nui://core_inventory/html/img/"
-    }
-
-    for inv, path in pairs(inventoryMap) do
-        if resource(inv) == 'started' then
-            return path .. qbItems[img].image
-        end
-    end
+	if GetResourceState('ox_inventory') == 'started' then
+		local Items = exports['ox_inventory']:Items()
+		if Items[img]['client'] then 
+			if Items[img]['client']['image'] then
+				return Items[img]['client']['image']
+			else
+				return "nui://ox_inventory/web/images/".. img.. '.png'
+			end
+		else
+			return "nui://ox_inventory/web/images/".. img.. '.png'
+		end
+	elseif GetResourceState('ps-inventory') == 'started' then
+		return "nui://ps-inventory/html/images/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('lj-inventory') == 'started' then
+		return "nui://lj-inventory/html/images/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('qb-inventory') == 'started' then
+		return "nui://qb-inventory/html/images/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('qs-inventory') == 'started' then
+		return "nui://qs-inventory/html/img/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('origen_inventory') == 'started' then
+		return "nui://origen_inventory/html/img/".. QBCore.Shared.Items[img].image
+	elseif GetResourceState('core_inventory') == 'started' then
+		return "nui://core_inventory/html/img/".. QBCore.Shared.Items[img].image
+	end
 end
 
 function GetLabel(label)
