@@ -99,16 +99,6 @@
             image = "boombox.png",
         }
     },
-	["boombox"] = {
-        label = "Boom Box",
-        weight = 2500,
-        stack = false,
-        close = false,
-        description = "How Did People Carry This",
-        client = {
-            image = "boombox.png",
-        }
-    },
 	["checkbook"] = {
         label = "Check Book",
         weight = 2500,
