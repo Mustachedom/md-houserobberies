@@ -1,111 +1,182 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local insideHouse = {}
 
-RegisterNetEvent('md-houserobbery:server:accessbreak', function(tier, item)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local info = Player.PlayerData.charinfo
-    local luck = math.random(1,100)
-    local playerCoords = GetEntityCoords(GetPlayerPed(src))
-    if luck <= 20 then 
-        RemoveItem(src, item, 1)
-    end
-    
-end)
+for k, v in pairs(GlobalState.HouseRobbery) do
+    insideHouse[k] = {}
+end
 
-RegisterNetEvent('md-houserobberies:server:sellloot', function(itemName)
+local function removeHouse(house)
+    CreateThread(function()
+        Wait(1000 * 60 * 5)
+        Houses[house].spawned = false
+        Houses[house].busy = false
+        for k, v in pairs(Houses[house].loot) do
+            Houses[house].loot[k].taken = false
+            Houses[house].loot[k].busy = false
+        end
+        GlobalState.HouseRobbery = Houses
+        for k, v in pairs(insideHouse[house]) do
+            local getSource = ps.getSource(k)
+            TriggerClientEvent('md-houseRobberies:client:forceLeave', getSource, house)
+        end
+        insideHouse[house] = {}
+    end)
+end
+
+RegisterNetEvent('md-houseRobberies:server:busyState', function(house)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local info = Player.PlayerData.charinfo
-    local itemConfig
-    for i = 1, #Config.BlackMarket do
-        if Config.BlackMarket[i].item == itemName then
-            itemConfig = Config.BlackMarket[i]
-            break
+    if not Houses[house] then return end
+    local catch = 0
+    if not ps.checkDistance(src, vector3(Houses[house].coords.x, Houses[house].coords.y, Houses[house].coords.z - 145.0), 5.0) then
+        catch = catch + 1
+        if not ps.checkDistance(src, Houses[house].coords, 5.0) then
+            catch = catch + 1
+            ps.notify(src, 'You are too far from the house', 'error')
+            return
         end
     end
-    if not itemConfig then return end 
-    local price = math.random(itemConfig.minvalue, itemConfig.maxvalue) 
-    local itemsell = Player.Functions.GetItemByName(itemName)
-    local playerCoords = GetEntityCoords(GetPlayerPed(src))
-    if itemsell and itemsell.amount > 0 then
-        if RemoveItem(src, itemName, itemsell.amount) then
-            Player.Functions.AddMoney('cash', price * itemsell.amount)
-            Notifys("You received " .. itemsell.amount * price .. " of Cash.", "success")
-            Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Sold  ' .. itemsell.amount .. ' ' .. itemName .. ' For A Price Of ' .. price * itemsell.amount .. ' At ' .. playerCoords .. '!', 'sell')
+    if catch == 2 then
+        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The busyState Event')
+        return
+    end
+    Houses[house].busy = not Houses[house].busy
+    GlobalState.HouseRobbery = Houses
+end)
+
+RegisterNetEvent('md-houseRobberies:server:spawnHouse', function(house)
+    local src = source
+    if not Houses[house] then return end
+    local catch = 0
+    if not ps.checkDistance(src, vector3(Houses[house].coords.x, Houses[house].coords.y, Houses[house].coords.z - 145.0), 5.0) then
+        catch = catch + 1
+        if not ps.checkDistance(src, Houses[house].coords, 5.0) then
+            catch = catch + 1
+            ps.notify(src, 'You are too far from the house', 'error')
+            return
         end
     end
+    if catch == 2 then
+        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The spawn House Event')
+        return
+    end
+    if Houses[house].spawned then
+        ps.notify(src, 'This House Is Already Spawned', 'error')
+        return
+    end
+    Houses[house].spawned = true
+    GlobalState.HouseRobbery = Houses
+    insideHouse[house][ps.getIdentifier(src)] = house
+    removeHouse(house)
 end)
 
-RegisterNetEvent('md-houserobberies:server:loseloot', function(item)
+RegisterNetEvent('md-houseRobberies:server:enterHouse', function(house)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local itemsell = Player.Functions.GetItemByName(item)
-    local info = Player.PlayerData.charinfo
-    if itemsell and itemsell.amount > 0 then
-        if RemoveItem(src, item, itemsell.amount) then
-            Notifys("You Just Got Robbed of " ..itemsell.amount .." ".. QBCore.Shared.Items[item].label .. "s!", "error")
-            Log('ID: 1 Name: ' .. info.firstname .. ' ' .. info.lastname .. ' Got Robbed Of   ' .. itemsell.amount .. ' ' .. item .. ' Like A Nerd!', 'robbed')
+    if not Houses[house] then return end
+    local catch = 0
+    if not ps.checkDistance(src, vector3(Houses[house].coords.x, Houses[house].coords.y, Houses[house].coords.z - 145.0), 5.0) then
+        catch = catch + 1
+        if not ps.checkDistance(src, Houses[house].coords, 5.0) then
+            catch = catch + 1
+            ps.notify(src, 'You are too far from the house', 'error')
+            return
         end
     end
-end)
-
-RegisterNetEvent('md-houserobbery:server:enterHouse', function(house)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local info = Player.PlayerData.charinfo
-    TriggerClientEvent('md-houserobbery:client:enterHouse', src, house)
-    Config.Houses[house]['spawned'] = true
-    TriggerClientEvent('md-houserobbery:client:setHouseState', -1, house, true)
-    Log('House ID ' .. house .. ' Has Been Unlocked By ' .. info.firstname .. ' ' .. info.lastname .. '!', 'brokenin')
-    Wait(1000 * 60 * Config.HouseTimer)
-    Config.Houses[house]['spawned'] = false
-    TriggerClientEvent('md-houserobbery:client:setHouseState', -1, house, false)
-    Log('House ID ' .. house .. ' Has Been Locked', 'locked')
-end)
-
-RegisterNetEvent('md-houserobbery:server:setlootused', function(house, k)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local info = Player.PlayerData.charinfo
-    Log('ID: ' .. src .. 'Name:' .. info.firstname .. ' ' .. info.lastname .. ' Took From ' .. house .. ' Loot Spot ' .. k .. '!', 'set' )
-    Config.Houses[house]['loot'][k].taken = true
-    TriggerClientEvent('md-houserobbery:client:SetLootState', -1, house, k, true)
-    Wait(1000 * 60 * Config.HouseTimer)
-    Config.Houses[house]['loot'][k].taken = false
-    Log('' .. house .. ' Loot Spot ' .. k .. ' Is Availavble!', 'set' )
-    TriggerClientEvent('md-houserobbery:client:SetLootState', -1, house, k, false)
-end)
-
-RegisterNetEvent('md-houserobbery:server:setlootstatebusy', function(house, k,state)
-    Config.Houses[house]['loot'][k].busy = state
-    TriggerClientEvent('md-houserobbery:client:SetLootStateBusy', -1, house, k, state)
-end)
-
-RegisterNetEvent('md-houserobbery:server:closeHouse', function(house)
-    Config.Houses[house]['spawned'] = false
-    Log('House ID ' .. house .. ' Has Been Locked By Police', 'locked')
-    TriggerClientEvent('md-houserobbery:client:setHouseState', -1, house, false)
-end)
-
-RegisterNetEvent('md-houserobberies:server:ptfx', function(loc)
-TriggerClientEvent('md-housrobberies:client:ptfx', -1, loc)
-end)
-RegisterNetEvent('md-houserobbery:server:GetLoot', function(tier, rewardtype, objectCoords)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local info = Player.PlayerData.charinfo
-    if not CheckDist(source, objectCoords) then return end
-    local chance = math.random(1,100)
-    local cashamount = math.random(Config.CashMin, Config.CashMax)
-    local randomItem = math.random(1,#Config.Rewards[tier][rewardtype])
-    local data = Config.Rewards[tier][rewardtype][randomItem]
-    if Config.EmptyChance <= chance then 
-        AddItem(src, data.item, data.amount)
-        if Config.CashChance <= chance then
-            Player.Functions.AddMoney('cash', cashamount)
-        end
-        Log('ID: 1 Name: '.. GetName(src).. ' Stole ' .. data.amount .. ' Of ' .. data.item .. ' From A Tier ' .. tier .. ' House', 'stole')
-    else
-        Notifys("This Isn't Worth Taking", "error") 
+    if catch == 2 then
+        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The Enter House Event')
+        return
     end
+    if not Houses[house].spawned then
+        ps.notify(src, 'This House Is Not Spawned', 'error')
+        return
+    end
+    insideHouse[house][ps.getIdentifier(src)] = true
+end)
+
+RegisterNetEvent('md-houseRobberies:server:leaveHouse', function(house)
+    local src = source
+    if not Houses[house] then return end
+    local catch = 0
+    if not ps.checkDistance(src, vector3(Houses[house].coords.x, Houses[house].coords.y, Houses[house].coords.z - 145.0), 5.0) then
+        catch = catch + 1
+        if not ps.checkDistance(src, Houses[house].coords, 5.0) then
+            catch = catch + 1
+            ps.notify(src, 'You are too far from the house', 'error')
+            return
+        end
+    end
+    if catch == 2 then
+        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The Leave House Event')
+        return
+    end
+    if not Houses[house].spawned then
+        ps.notify(src, 'This House Is Not Spawned', 'error')
+        return
+    end
+    insideHouse[house][ps.getIdentifier(src)] = nil
+end)
+
+RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
+    local src = source
+    local home = Houses[house]
+    if not home then return end
+    if not home.loot[lootKey] then return end
+    local houseCoords = vector3(home.coords.x, home.coords.y, home.coords.z - 145.0)
+    local objectCoords = vector3(home.loot[lootKey].coords.x, home.loot[lootKey].coords.y, home.loot[lootKey].coords.z)
+    local trueLocation = vector3((houseCoords.x + objectCoords.x), (houseCoords.y + objectCoords.y), (houseCoords.z + objectCoords.z))
+    local catch = 0
+    local reasons = {}
+
+    if not ps.checkDistance(src, trueLocation, 5.0) then
+        table.insert(reasons, 'too far from the house')
+        catch = catch + 1
+    end
+
+    if not home.spawned then
+        table.insert(reasons, 'This House Is Not Spawned')
+        catch = catch + 1
+    end
+
+    if not home.loot[lootKey] then
+        table.insert(reasons, 'This Loot Does Not Exist')
+        catch = catch + 1
+    end
+
+    if home.loot[lootKey].taken then
+        table.insert(reasons, 'This Loot Has Already Been Taken')
+        catch = catch + 1
+    end
+
+    if not insideHouse[house][ps.getIdentifier(src)] then
+        table.insert(reasons, 'You Are Not Inside The House')
+        catch = catch + 1
+    end
+
+    if home.loot[lootKey].busy then
+        catch = catch + 1
+        table.insert(reasons, 'This Loot Is Not Being Robbed')
+    end
+    local copCheck = ps.getJobTypeCount('leo')
+    if copCheck < 1 then
+        catch = catch + 1
+        table.insert(reasons, 'Not Enough Cops To Do This')
+    end
+
+    if catch > 0 then
+        ps.debug(ps.getPlayerName(src) .. ' Is Trying To Exploit The Take Loot Event | Reasons: ', reasons)
+        return
+    end
+
+    local itemGiven = generateLoot(home.tier, home.loot[lootKey].type)
+    ps.addItem(src, itemGiven.item, itemGiven.amount)
+    home.loot[lootKey].taken = true
+    home.loot[lootKey].busy = false
+    GlobalState.HouseRobbery = Houses
+    TriggerClientEvent('md-houseRobberies:client:syncLoot', -1, house, lootKey)
+end)
+
+ps.registerCallback('md-houserobberies:server:GetCoppers', function(source, house)
+   local src = source
+   if not ps.checkDistance(src, Houses[house].coords, 5.0) then
+       return -1
+   end
+   return ps.getJobTypeCount('leo')
 end)
