@@ -20,7 +20,6 @@ local dispatch = Config.Dispatch
    elseif tiered[tier] == 'ps_scrambler' then
 	   local check = exports['ps-ui']:Scrambler(false, game['ps_scrambler'].type,  game['ps_scrambler'].time, game['ps_scrambler'].mirrored)
 	   return check
-		  
    elseif tiered[tier] == 'ps_var' then
 	   local check = exports['ps-ui']:VarHack(false, game['ps_var'].numBlocks,  game['ps_var'].time)
 	   return check

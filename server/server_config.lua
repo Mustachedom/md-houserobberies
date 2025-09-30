@@ -1,11 +1,11 @@
 
 local function getLootData(tier) -- generates loot table for each house tier
-    local lootTable = {
+    local lootTable = { -- these are the objects that spawn inside shells and their states || coords == offset from center of shell
         {
             {taken = false, busy = false, type = "art",     coords = vector3(5.24, 2.12, 1.90),     prop = "prop_cs_dildo_01",       rotation = 180.0},
             {taken = false, busy = false, type= "kitchen",  coords = vector3(2.61, -0.61, 2.90),    prop = "hei_prop_hei_paper_bag", rotation = 180.0},
             {taken = false, busy = false, type = "cabinet", coords = vector3(-5.05, 1.85, 1.90),    prop = "prop_rub_cabinet01",     rotation = 0.0},
-            {taken = true, busy = true, type = "cabinet",  coords = vector3(0.79, 2.05, 1.90),     prop = "prop_rub_cabinet01",     rotation = 0.0},
+            {taken = false, busy = false, type = "cabinet", coords = vector3(0.79, 2.05, 1.90),     prop = "prop_rub_cabinet01",     rotation = 0.0},
             {taken = false, busy = false, type = "cabinet", coords = vector3(4.37, -1.92, 1.90),    prop = "v_ret_ml_tablea",        rotation = 180.0}
         },
         {
@@ -24,34 +24,34 @@ local function getLootData(tier) -- generates loot table for each house tier
             {taken = false, busy = false, type = "art",        coords = vector3(-9.11, -0.02, 2.50), prop = "apa_p_h_acc_artwallm_03", rotation = 90.0}
         },
         {
-            {taken = false, busy = false, num = 1,	type = "chest",      coords = vector3(2.76, -0.60, 0.06),   prop = "prop_disp_cabinet_01",       rotation = 90.0},
-            {taken = false, busy = false, num = 2,  type = "electronic", coords = vector3(-3.65, 6.69, 0.60),   prop = "xm_prop_x17_computer_01",    rotation = 90.0},
-            {taken = false, busy = false, num = 3,  type = "art",        coords = vector3(1.69, 9.75, 0.55),    prop = "prop_cs_dildo_01",           rotation = 180.0},
-            {taken = false, busy = false, num = 4,  type = "chest",	     coords = vector3(5.87, -4.55, 0.06),   prop = "apa_mp_h_bed_chestdrawer_02",rotation = 270.0},
-            {taken = false, busy = false, num = 5,  type = "kitchen",    coords = vector3(-0.47, -0.59, 1.04),  prop = "hei_prop_hei_paper_bag",     rotation = 180.0},
-            {taken = false, busy = false, num = 6,  type = "kitchen",    coords = vector3(-5.79, 1.30, 0.82),   prop = "hei_prop_hei_paper_bag",      rotation = 0.0},
-            {taken = false, busy = false, num = 7,	type = "art",        coords = vector3(0.47, 1.49, 0.98),    prop = "hei_prop_drug_statue_01",     rotation = 90.0}
+            {taken = false, busy = false, type = "chest",      coords = vector3(2.76, -0.60, 0.06),   prop = "prop_disp_cabinet_01",       rotation = 90.0},
+            {taken = false, busy = false, type = "electronic", coords = vector3(-3.65, 6.69, 0.60),   prop = "xm_prop_x17_computer_01",    rotation = 90.0},
+            {taken = false, busy = false, type = "art",        coords = vector3(1.69, 9.75, 0.55),    prop = "prop_cs_dildo_01",           rotation = 180.0},
+            {taken = false, busy = false, type = "chest",	     coords = vector3(5.87, -4.55, 0.06),   prop = "apa_mp_h_bed_chestdrawer_02",rotation = 270.0},
+            {taken = false, busy = false, type = "kitchen",    coords = vector3(-0.47, -0.59, 1.04),  prop = "hei_prop_hei_paper_bag",     rotation = 180.0},
+            {taken = false, busy = false, type = "kitchen",    coords = vector3(-5.79, 1.30, 0.82),   prop = "hei_prop_hei_paper_bag",      rotation = 0.0},
+            {taken = false, busy = false, type = "art",        coords = vector3(0.47, 1.49, 0.98),    prop = "hei_prop_drug_statue_01",     rotation = 90.0}
         },
         {
-           {taken = false, busy = false, num = 1,   type = "kitchen",    coords = vector3(0.06, 1.98, 0.64),     prop = "hei_prop_hei_paper_bag",   rotation = -90.0},
-           {taken = false, busy = false, num = 2,   type = "electronic", coords = vector3(-0.60, -3.76, 0.17),   prop = "prop_speaker_01",          rotation = 180.0},
-           {taken = false, busy = false, num = 3,   type = "electronic", coords = vector3(0.42, -3.76, 0.17),    prop = "prop_speaker_01" ,         rotation = 180.0},
-           {taken = false, busy = false, num = 4,   type = "art",        coords = vector3( -6.5, 2.85, 1.92),    prop = "apa_p_h_acc_artwallm_03",  rotation = 90.0},
-           {taken = false, busy = false, num = 5,   type = "art",        coords = vector3( -6.5, -2.38, 1.93),   prop = "apa_p_h_acc_artwallm_04",  rotation = 90.0},
-           {taken = false, busy = false, num = 6,   type = "art",        coords = vector3( -5.90, -1.52, 0.8),   prop = "hei_prop_drug_statue_01",  rotation = -90.0},
-           {taken = false, busy = false, num = 7,   type = "art",        coords = vector3( -5.96, 1.82, 0.8),    prop = "hei_prop_drug_statue_01",  rotation = 90.0}
+           {taken = false, busy = false, type = "kitchen",    coords = vector3(0.06, 1.98, 0.64),     prop = "hei_prop_hei_paper_bag",   rotation = -90.0},
+           {taken = false, busy = false, type = "electronic", coords = vector3(-0.60, -3.76, 0.17),   prop = "prop_speaker_01",          rotation = 180.0},
+           {taken = false, busy = false, type = "electronic", coords = vector3(0.42, -3.76, 0.17),    prop = "prop_speaker_01" ,         rotation = 180.0},
+           {taken = false, busy = false, type = "art",        coords = vector3( -6.5, 2.85, 1.92),    prop = "apa_p_h_acc_artwallm_03",  rotation = 90.0},
+           {taken = false, busy = false, type = "art",        coords = vector3( -6.5, -2.38, 1.93),   prop = "apa_p_h_acc_artwallm_04",  rotation = 90.0},
+           {taken = false, busy = false, type = "art",        coords = vector3( -5.90, -1.52, 0.8),   prop = "hei_prop_drug_statue_01",  rotation = -90.0},
+           {taken = false, busy = false, type = "art",        coords = vector3( -5.96, 1.82, 0.8),    prop = "hei_prop_drug_statue_01",  rotation = 90.0}
         },
         {
-            {taken = false, busy = false, num = 1,	type = "kitchen",   coords = vector3(7.70, 5.91, 10.3),	    prop = "v_ret_247_cereal1",         rotation = 0.0},
-            {taken = false, busy = false, num = 2,	type = "art",	    coords = vector3(-0.01, 6.06, 8.91),	prop = "hei_prop_hei_bust_01",      rotation = -90.0}, 
-            {taken = false, busy = false, num = 3,	type = "art",       coords = vector3( 2.80, 0.7, 14.6),     prop = "apa_p_h_acc_artwalll_02",   rotation = -90.0},  
-            {taken = false, busy = false, num = 4,	type = "art",       coords = vector3( 3.61, 6.03, 10.37),	prop = "hei_prop_drug_statue_01",   rotation = 90.0}, 
-            {taken = false, busy = false, num = 5,  type = "valuables",	coords = vector3(-6.13, 2.25,13.9),	    prop = "prop_j_disptray_03",        rotation = -30.0},   
-            {taken = false, busy = false, num = 6,  type = "art",	    coords = vector3( -5.47, -9.05, 14.5),	prop = "apa_p_h_acc_artwalls_03",   rotation = 180.0},  
-            {taken = false, busy = false, num = 7,	type = "valuables", coords = vector3( -2.77, 3.12, 13.50),	prop = "p_v_43_safe_s",             rotation = 180.0},
-            {taken =  false,busy = false, num = 8,	type = "electronic",coords = vector3( 0.03, -8.75, 9.6),	prop = "xm_prop_base_staff_desk_01",rotation = 180.0},
-            {taken =  false,busy = false, num = 9,	type = "electronic",coords = vector3( 0.76, 1.80, 11.00),	prop = "prop_tv_flat_01_screen",    rotation = 0.0},
-            {taken =  false,busy = false, num = 10,	type = "valuables", coords = vector3( 3.43, -2.15, 13.50),  prop = "v_res_m_armoire",           rotation = 0.0}
+            {taken = false, busy = false, type = "kitchen",   coords = vector3(7.70, 5.91, 10.3),	  prop = "v_ret_247_cereal1",         rotation = 0.0},
+            {taken = false, busy = false, type = "art",	      coords = vector3(-0.01, 6.06, 8.91),	  prop = "hei_prop_hei_bust_01",      rotation = -90.0}, 
+            {taken = false, busy = false, type = "art",       coords = vector3( 2.80, 0.7, 14.6),     prop = "apa_p_h_acc_artwalll_02",   rotation = -90.0},  
+            {taken = false, busy = false, type = "art",       coords = vector3( 3.61, 6.03, 10.37),	  prop = "hei_prop_drug_statue_01",   rotation = 90.0}, 
+            {taken = false, busy = false, type = "valuables", coords = vector3(-6.13, 2.25,13.9),	  prop = "prop_j_disptray_03",        rotation = -30.0},   
+            {taken = false, busy = false, type = "art",	      coords = vector3( -5.47, -9.05, 14.5),  prop = "apa_p_h_acc_artwalls_03",   rotation = 180.0},  
+            {taken = false, busy = false, type = "valuables", coords = vector3( -2.77, 3.12, 13.50),  prop = "p_v_43_safe_s",             rotation = 180.0},
+            {taken = false, busy = false, type = "electronic",coords = vector3( 0.03, -8.75, 9.6),	  prop = "xm_prop_base_staff_desk_01",rotation = 180.0},
+            {taken = false, busy = false, type = "electronic",coords = vector3( 0.76, 1.80, 11.00),	  prop = "prop_tv_flat_01_screen",    rotation = 0.0},
+            {taken = false, busy = false, type = "valuables", coords = vector3( 3.43, -2.15, 13.50),  prop = "v_res_m_armoire",           rotation = 0.0}
         }
 
     }
@@ -298,13 +298,33 @@ Rewards = {
     }
 }
 
-function generateLoot(tier, room)
-    local lootTable = Rewards[tier][room]
-    if not lootTable then return nil end
-    local lootItem = lootTable[math.random(1, #lootTable)]
-    return lootItem
-end
+fencePeds = {
+    {ped = "s_m_y_dealer_01", coords = vector4(1391.93, 3611.51, 37.94, 16.47)},
+}
 
-ps.registerCallback('md-houseRobberies:server:getHouses', function()
-    return Houses
-end)
+fenceItems = {
+   diamond_ring =       { price = 30, robChance = 100, },
+   goldchain =          { price = 30, robChance = 100, },
+   thermite =           { price = 30, robChance = 100, },
+   rolex =              { price = 30, robChance = 100, },
+   tablet =             { price = 30, robChance = 100, },
+   art1 =               { price = 30, robChance = 100, },
+   art2 =               { price = 30, robChance = 100, },
+   art3 =               { price = 30, robChance = 100, },
+   art4 =               { price = 30, robChance = 100, },
+   art5 =               { price = 30, robChance = 100, },
+   art6 =               { price = 30, robChance = 100, },
+   art7 =               { price = 30, robChance = 100, },
+   radioscanner =       { price = 30, robChance = 100, },
+   pinger =             { price = 30, robChance = 100, },
+   gatecrack =          { price = 30, robChance = 100, },
+   houselaptop =        { price = 30, robChance = 100, },
+   mansionlaptop =      { price = 30, robChance = 100, },
+   electronickit =      { price = 30, robChance = 100, },
+   boombox =            { price = 30, robChance = 100, },
+   mdspeakers =         { price = 30, robChance = 100, },
+   mdtablet =           { price = 30, robChance = 100, },
+   mddesktop =          { price = 30, robChance = 100, },
+   mdmonitor =          { price = 30, robChance = 100, },
+   checkbook =          { price = 30, robChance = 100, },
+}

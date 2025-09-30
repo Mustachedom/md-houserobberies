@@ -1,4 +1,4 @@
-```
+```lua
 ["houselaptop"] = {
         label = "House laptop",
         weight = 1200,
