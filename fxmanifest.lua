@@ -15,7 +15,8 @@ client_script {
    'client/**.lua',
 }
 server_script {
-'server/**.lua'
+    'server/server_config.lua',
+    'server/**.lua',
 }
 
 lua54 'yes'

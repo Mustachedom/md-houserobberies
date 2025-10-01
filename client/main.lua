@@ -13,6 +13,7 @@ local function spawnLoot(house)
     for lootKey, value in pairs (GlobalState.HouseRobbery[house].loot) do
         if value.taken then goto continue end
         local coords = vector3(GlobalState.HouseRobbery[house].coords.x, GlobalState.HouseRobbery[house].coords.y, GlobalState.HouseRobbery[house].coords.z - 145.0)
+        local tier = GlobalState.HouseRobbery[house].tier
         ps.requestModel(value.prop, 10000)
         loot[house][#loot[house]+1] = CreateObject(value.prop, coords.x + value.coords.x, coords.y + value.coords.y, coords.z + value.coords.z, false, false, false)
         Freeze(loot[house][#loot[house]], true, value.rotation)
@@ -22,11 +23,11 @@ local function spawnLoot(house)
                 icon = 'fa-solid fa-box-open',
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
-                    if not minigame(1) then
+                    if not minigame(Config.TierData[tier].robGame) then
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
-                    if not ps.progressbar('Stealing Loot', 5000, 'uncuff') then
+                    if not ps.progressbar('Stealing Loot', Config.TierData[tier].progressbarRob, 'uncuff') then
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
@@ -44,7 +45,6 @@ local function spawnLoot(house)
         ::continue::
     end
 end
-local peds = {}
 
 local function beATotalAsshole(ped)
     local timeout = 60 * 5
@@ -77,54 +77,63 @@ local function beATotalAsshole(ped)
 end
 
 local function spawnPed(coords, tier)
-    local pedModel = Config.PedOff[tier].pedModel
+    local pedData = Config.TierData[tier].ped
+    local pedModel = pedData.pedModel
+    local loc = pedData.loc
     ps.requestModel(pedModel, 10000)
-    local ped = CreatePed(4, pedModel, coords.x + Config.PedOff[tier].loc.x, coords.y + Config.PedOff[tier].loc.y, coords.z + Config.PedOff[tier].loc.z, 0.0, false, false)
-    local chance = math.random(1,100)
-    if 50 <= chance then
-        GiveWeaponToPed(ped, 'weapon_pistol', 255, false, true)
-    else
-        GiveWeaponToPed(ped, 'weapon_combatshotgun', 255, false, true)
-    end
+    ps.debug(coords.x + loc.x .. ' ' .. coords.y + loc.y .. ' ' .. coords.z + loc.z)
+    local ped = CreatePed(4, pedModel, coords.x + loc.x, coords.y + loc.y, coords.z + loc.z, 0.0, false, false)
+    GiveWeaponToPed(ped, pedData.weapon, 255, false, true)
     beATotalAsshole(ped)
 end
 
 local function spawnHouse(tier, coords)
     local loc = vector3(coords.x, coords.y, coords.z - 145.0)
-    local houseData = Config.TierExports[tier].func(loc)
+    local houseData = Config.TierData[tier].export.func(loc)
     CreateThread(function()
         Wait(1000 * 60 * 5)
-        Config.TierExports[tier].despawn(houseData, function()
+        Config.TierData[tier].export.despawn(houseData, function()
             if #(GetEntityCoords(PlayerPedId()) - loc) <= 15.0 then
                 SetEntityCoords(PlayerPedId(), coords)
             end
         end)
-        if Config.spawnChance <= math.random(1,100) then
-            spawnPed(coords, tier)
-        end
     end)
+    if Config.TierData[tier].ped.chance >= math.random(1,100) then
+        spawnPed(loc, tier)
+    end
     return houseData
 end
 
 local function initTargets()
     for k, v in pairs(GlobalState.HouseRobbery) do
-        local off = Config.OffSet[v.tier]
+        local off = Config.TierData[v.tier].offset
         ps.boxTarget('mdhouseRob'..k, v.coords, {}, {
             {
                 label = 'Rob House',
                 icon = 'fa-solid fa-house',
                 action = function()
-                    local copCheck = ps.callback('md-houserobberies:server:GetCoppers', k)
-                    if copCheck < 0 then
-                        ps.notify('Not Enough Cops To Do This', 'error')
-                        return
-                    end
-                    PoliceCall(20)
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
-                    if not minigame(v.tier) then
+                    local copCheck = ps.callback('md-houserobberies:server:GetCoppers', k)
+                    if copCheck < Config.TierData[v.tier].police then
+                        ps.notify('Not Enough Cops To Do This', 'error')
                         TriggerServerEvent('md-houseRobberies:server:busyState', k)
                         return
                     end
+
+                    PoliceCall(Config.TierData[v.tier].policeCallChance)
+
+                    if not ps.hasItem(Config.TierData[v.tier].breakInItem) then
+                        ps.notify('You Do Not Have The Required Item: ' .. Config.TierData[v.tier].breakInItem, 'error')
+                        TriggerServerEvent('md-houseRobberies:server:busyState', k)
+                        return
+                    end
+
+                    if not minigame(Config.TierData[v.tier].breakInGame) then
+                        TriggerServerEvent('md-houseRobberies:server:busyState', k)
+                        TriggerServerEvent('md-houseRobberies:server:failMini', k)
+                        return
+                    end
+
                     TriggerServerEvent('md-houseRobberies:server:spawnHouse', k)
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
                     spawnHouse(v.tier, v.coords)
@@ -159,12 +168,8 @@ local function initTargets()
                 icon = 'fa-solid fa-house',
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
-                    if not minigame(v.tier) then
-                        TriggerServerEvent('md-houseRobberies:server:busyState', k)
-                        return
-                    end
-                    TriggerServerEvent('md-houseRobberies:server:busyState', k)
                     TriggerServerEvent('md-houseRobberies:server:lockHouse', k)
+                    TriggerServerEvent('md-houseRobberies:server:busyState', k)
                 end,
                 canInteract = function()
                     if GlobalState.HouseRobbery[k].spawned and ps.getJobType() == 'leo' and not GlobalState.HouseRobbery[k].busy then
@@ -235,6 +240,7 @@ RegisterNetEvent('md-houseRobberies:client:smokeBomb', function(house)
     local fx = StartParticleFxLoopedAtCoord('scr_ba_bb_plane_smoke_trail',loc.x + math.random(-2,2), loc.y + math.random(-2,2), loc.z, 0, 0, 0, 3.0, 0, 0,0)
     StopParticleFxLooped(fx, 0)
 end)
+
 local peds = {}
 
 local function spawnFence()

@@ -1,6 +1,7 @@
 Config = {}
 ps = exports.ps_lib:init()
 
+
 Config.Dispatch = 'ps' -- either ps/aty/qs/core/cd
 Config.Minigames = {
     ps_circle =            {    amount = 2,     speed = 8,},
@@ -16,85 +17,112 @@ Config.Minigames = {
     blnumberslide = {    amount = 1,     difficulty = 50, keynumbers = 3},
     blrapidlines =  {    amount = 1,     difficulty = 50, numberofline = 3},
     blcircleshake = {    amount = 1,     difficulty = 50, stages = 3},
-
 }
 
-Config.TierExports = {
+
+Config.TierData = {
     {
-        name = 'qb-interior',
-        func = function(coords)
-            return exports['qb-interior']:CreateCaravanShell(coords)
-        end,
-        despawn = function(shell, cb)
-            exports['qb-interior']:DespawnInterior(shell[1], cb)
-        end
+        offset = {x = -1.5, y = -2.0, z = 3.0},
+        ped = {pedModel = 'ig_priest', loc = vector3(4.0, 0.0, 3.0), weapon = 'WEAPON_PISTOL', chance = 100},
+        police = 0,
+        policeCallChance = 20,
+        robGame = 'ps_circle',
+        progressbarRob = 8000,
+        breakInGame = 'ps_circle',
+        breakInItem = 'lockpick',
+        export = {
+            func = function(coords)
+                return exports['qb-interior']:CreateCaravanShell(coords)
+            end,
+            despawn = function(shell, cb)
+                exports['qb-interior']:DespawnInterior(shell[1], cb)
+            end
+        }
     },
     {
-        name = 'qb-interior',
-        func = function(coords)
-            return exports['qb-interior']:CreateLesterShell(coords)
-        end,
-        despawn = function(shell, cb)
-            exports['qb-interior']:DespawnInterior(shell[1], cb)
-        end
+        offset = {x = -1.7, y = -1.0, z = 1.0},
+        ped = {pedModel = 'ig_priest', loc = vector3(1.7, 1.0, 1.0), weapon = 'WEAPON_PISTOL', chance = 30},
+        police = 2,
+        policeCallChance = 30,
+        progressbarRob = 10000,
+        breakInGame = 'ps_maze',
+        breakInItem = 'lockpick',
+        export = {
+            func = function(coords)
+                return exports['qb-interior']:CreateLesterShell(coords)
+            end,
+            despawn = function(shell, cb)
+                exports['qb-interior']:DespawnInterior(shell[1], cb)
+            end
+        }
     },
     {
-        name = 'qb-interior',
-        func = function(coords)
-            return exports['qb-interior']:CreateTrevorsShell(coords)
-        end,
-        despawn = function(shell, cb)
-            exports['qb-interior']:DespawnInterior(shell[1], cb)
-        end
+        offset = {x = -0.1, y = -3.8, z = 3.0},
+        ped = {pedModel = 'ig_priest', loc = vector3(3.0, 0.0, 3.0),weapon = 'WEAPON_PISTOL', chance = 40},
+        police = 3,
+        policeCallChance = 40,
+        progressbarRob = 12000,
+        breakInGame = 'ps_scrambler',
+        breakInItem = 'advancedlockpick',
+        export = {
+            func = function(coords)
+                return exports['qb-interior']:CreateTrevorsShell(coords)
+            end,
+            despawn = function(shell, cb)
+                exports['qb-interior']:DespawnInterior(shell[1], cb)
+            end
+        }
     },
     {
-        name = 'qb-interior',
-        func = function(coords)
-            return exports['qb-interior']:CreateHouseRobbery(coords)
-        end,
-        despawn = function(shell, cb)
-            exports['qb-interior']:DespawnInterior(shell[1], cb)
-        end
+        offset = {x = 1.8, y = -10.0, z = 1.0},
+        ped = {pedModel = 'ig_priest', loc = vector3(2.3, -0.0, 1.0),weapon = 'WEAPON_PISTOL', chance = 50},
+        police = 4,
+        policeCallChance = 50,
+        progressbarRob = 15000,
+        breakInGame = 'ps_var',
+        breakInItem = 'advancedlockpick',
+        export = {
+            func = function(coords)
+                return exports['qb-interior']:CreateHouseRobbery(coords)
+            end,
+            despawn = function(shell, cb)
+                exports['qb-interior']:DespawnInterior(shell[1], cb)
+            end
+        }
     },
     {
-        name = 'qb-interior',
-        func = function(coords)
-            return exports['qb-interior']:CreateFurniMotelModern(coords)
-        end,
-        despawn = function(shell, cb)
-            exports['qb-interior']:DespawnInterior(shell[1], cb)
-        end
+        offset = {x = 5.2, y = 4.5, z = 1.5},
+        ped = {pedModel = 'ig_priest', loc = vector3(0.0, 0.0, 1.5),weapon = 'WEAPON_PISTOL', chance = 70},
+        police = 5,
+        policeCallChance = 60,
+        progressbarRob = 18000,
+        breakInGame = 'ps_thermite',
+        breakInItem = 'houselaptop',
+        export = {
+            func = function(coords)
+                return exports['qb-interior']:CreateFurniMotelModern(coords)
+            end,
+            despawn = function(shell, cb)
+                exports['qb-interior']:DespawnInterior(shell[1], cb)
+            end
+        }
     },
     {
+        offset = {x = -10.0, y = 5.8, z = 10.5},
+        ped = {pedModel = 'ig_priest', loc = vector3(-8.0, 1.0, 14.5),weapon = 'WEAPON_PISTOL', chance = 90},
+        police = 6,
+        policeCallChance = 70,
+        progressbarRob = 20000,
+        breakInGame = 'ox',
+        breakInItem = 'houselaptop',
+        export = {
         name = 'qb-interior',
-        func = function(coords)
-            return exports['qb-interior']:CreateMichael(coords)
-        end,
-        despawn = function(shell, cb)
-            return exports['qb-interior']:DespawnInterior(shell[1], cb)
-        end 
+            func = function(coords)
+                return exports['qb-interior']:CreateMichael(coords)
+            end,
+            despawn = function(shell, cb)
+                return exports['qb-interior']:DespawnInterior(shell[1], cb)
+            end
+        }
     }
 }
-Config.OffSet = {
-      {x = -1.5, y = -2.0, z = 3.0},     -- tier 1
-      {x = -1.7, y = -1.0, z = 1.0},     -- tier 2
-      {x = -0.1, y = -3.8, z = 3.0},      -- tier 3
-      {x = 1.8, y = -10.0, z = 1.0},     -- tier 4
-      {x = 5.2, y = 4.5, z = 1.5},       -- tier 5
-      {x = -10.0, y = 5.8, z = 10.5},    -- tier 6
-    }
-
-
-    Config.PedOff = {
-      {pedModel = 'ig_priest', loc = vector3(4.0, 0.0, 3.0)},     -- tier 1
-      {pedModel = 'ig_priest', loc = vector3(1.7, 1.0, 1.0)},     -- tier 2
-      {pedModel = 'ig_priest', loc = vector3(3.0, 0.0, 3.0)},     -- tier 3
-      {pedModel = 'ig_priest', loc = vector3(2.3, -0.0, 1.0)},    -- tier 4
-      {pedModel = 'ig_priest', loc = vector3(0.0, 0.0, 1.5)},     -- tier 5
-      {pedModel = 'ig_priest', loc = vector3(-8.0, 1.0, 14.5)},   -- tier 6
-    }
-    Config.spawnChance = 50 -- chance in percent that a ped will spawn in the house
----------------------------------------------------------------------------------------
--- if you assault the black market ped, he will try to kill you ;) --------------------
--- if fail of successchance he will keep items and not give you money------------------
----------------------------------------------------------------------------------------

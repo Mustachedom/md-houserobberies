@@ -147,7 +147,6 @@ RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
     local trueLocation = vector3((houseCoords.x + objectCoords.x), (houseCoords.y + objectCoords.y), (houseCoords.z + objectCoords.z))
     local catch = 0
     local reasons = {}
-
     if not ps.checkDistance(src, trueLocation, 5.0) then
         table.insert(reasons, 'too far from the house')
         catch = catch + 1
@@ -177,9 +176,9 @@ RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
         catch = catch + 1
         table.insert(reasons, 'This Loot Is Not Being Robbed')
     end
-    
+
     local copCheck = ps.getJobTypeCount('leo')
-    if copCheck < Config.MinCops then
+    if copCheck < Config.TierData[home.tier].police then
         catch = catch + 1
         table.insert(reasons, 'Not Enough Cops To Do This')
     end
@@ -257,4 +256,15 @@ RegisterNetEvent('md-houseRobberies:server:smokeBomb', function(house)
         return
     end
     TriggerClientEvent('md-houseRobberies:client:smokeBomb', -1, house)
+end)
+
+RegisterNetEvent('md-houseRobberies:server:failMini', function(house)
+    local src = source
+    if not Houses[house] then return end
+    if not checkproperHouse(src, house) then return end
+
+    if not ps.removeItem(src, Config.TierData[Houses[house].tier].robGameItem, 1) then
+        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The Fail Mini Event | Does Not Have The Required Item But Had It On Client Check: ', Config.TierData[Houses[house].tier].robGameItem)
+        return
+    end
 end)
