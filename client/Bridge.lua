@@ -45,7 +45,7 @@ local dispatch = Config.Dispatch
 	elseif tier == 'none' then 
 		return true
 	else
-		print"^1 SCRIPT ERROR: Md-HouseRobberies set your minigame with one of the options!"
+		ps.warn(ps.lang('Error.noGame'))
 	end
  end
 
@@ -57,7 +57,7 @@ function PoliceCall(chance)
 		elseif dispatch == 'cd' then
 			local data = exports['cd_dispatch']:GetPlayerInfo()
 			TriggerServerEvent('cd_dispatch:AddNotification', {
-				job_table = {'police', }, 
+				job_table = {'police'},
 				coords = data.coords,
 				title = '420-69 House Robbert',
 				message = 'A '..data.sex..' robbing a store at '..data.street, 
@@ -81,7 +81,7 @@ function PoliceCall(chance)
 		elseif dispatch == 'aty' then 
 			exports["aty_dispatch"]:SendDispatch('House Robbery', '420-69', 40, {'police'})
 		else
-			print('Congrats, You Choose 0 of the options :)')	
+			ps.warn(ps.lang('Error.noDispatch'))
 		end
 	else
 	end

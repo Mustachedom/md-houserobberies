@@ -4,7 +4,7 @@ local insideHouse = {}
 ps.registerCallback('md-houserobberies:server:getLootItems', function(source, loc)
     local src = source
     if not ps.checkDistance(src, fencePeds[loc].coords, 5.0) then
-        return false, "You are too far away"
+        return false
     end
     return fenceItems
 end)
@@ -19,19 +19,19 @@ RegisterNetEvent('md-houseRobberies:server:sellLoot', function(loc, item)
 
     local itemCount = ps.getItemCount(src, item)
     if itemCount < 1 then
-        ps.notify(src, 'You do not have any ' .. item, 'error')
+        ps.notify(src, ps.lang('Error.dontHaveSale', item), 'error')
         return
     end
 
     if not fenceItems[item] then
-        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The Sell Loot Event | Item: ' .. item)
+        ps.warn(ps.lang('Warn.fence.wrongItem', ps.getPlayerName(src), item))
         return
     end
 
     if math.random(1, 100) <= fenceItems[item].robChance then
         TriggerClientEvent('md-houseRobberies:client:fenceRobbery', src, loc)
         ps.removeItem(src, item, itemCount)
-        ps.notify(src, 'Damn You Just Got Robbed Of All Your ' .. ps.getItemLabel(item), 'error')
+        ps.notify(src, ps.lang('Error.robbed', ps.getItemLabel(item)), 'error')
         return
     end
 
@@ -86,7 +86,7 @@ local function checkproperHouse(src, house)
         end
     end
     if catch == 2 then
-        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The MD HouseRobbery Event', 'Failed 2 Checks on location for front door and exit door')
+        ps.warn(ps.lang('Warn.faileddistChecks', ps.getPlayerName(src)))
         return
     end
     return true
@@ -131,7 +131,6 @@ RegisterNetEvent('md-houseRobberies:server:leaveHouse', function(house)
     if not Houses[house] then return end
     if not checkproperHouse(src, house) then return end
     if not Houses[house].spawned then
-        ps.notify(src, 'This House Is Not Spawned', 'error')
         return
     end
     insideHouse[house][ps.getIdentifier(src)] = nil
@@ -148,12 +147,12 @@ RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
     local catch = 0
     local reasons = {}
     if not ps.checkDistance(src, trueLocation, 5.0) then
-        table.insert(reasons, 'too far from the house')
+        table.insert(reasons, ps.lang('Warn.takeLootEvent.dist'))
         catch = catch + 1
     end
 
     if not home.spawned then
-        table.insert(reasons, 'This House Is Not Spawned')
+        table.insert(reasons, ps.lang('Warn.takeLootEvent.notSpawn'))
         catch = catch + 1
     end
 
@@ -184,7 +183,7 @@ RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
     end
 
     if catch > 0 then
-        ps.debug(ps.getPlayerName(src) .. ' Is Trying To Exploit The Take Loot Event | Reasons: ', reasons)
+        ps.warn(ps.lang('Warn.takeLootEvent.main', ps.getPlayerName(src)), table.concat(reasons, ', '))
         return
     end
 
@@ -211,16 +210,17 @@ RegisterNetEvent('md-houseRobberies:server:lockHouse', function(house)
     local jobType = ps.getJobType(src)
 
     if jobType ~= 'leo' then
-        ps.notify(src, 'You are not a cop', 'error')
+        ps.notify(src, ps.lang('Warn.lockhouse.notCop'), 'error')
         return
     end
+    
     if not ps.checkDistance(src, home.coords, 5.0) then
-        ps.notify(src, 'You are too far from the house', 'error')
+        ps.notify(src, ps.lang('Warn.lockhouse.dist'), 'error')
         return
     end
 
     if not home.spawned then
-        ps.notify(src, 'This House Is Not Spawned', 'error')
+        ps.notify(src, ps.lang('Warn.lockhouse.notSpawn'), 'error')
         return
     end
 
@@ -242,17 +242,17 @@ RegisterNetEvent('md-houseRobberies:server:smokeBomb', function(house)
     local jobType = ps.getJobType(src)
 
     if jobType ~= 'leo' then
-        ps.notify(src, 'You are not a cop', 'error')
+        ps.notify(src, ps.lang('Warn.lockhouse.notCop'), 'error')
         return
     end
 
     if not Houses[house] then return end
     if not ps.checkDistance(src, Houses[house].coords, 5.0) then
-        ps.notify(src, 'You are too far from the house', 'error')
+        ps.notify(src, ps.lang('Warn.lockhouse.dist'), 'error')
         return
     end
     if not Houses[house].spawned then
-        ps.notify(src, 'This House Is Not Spawned', 'error')
+        ps.notify(src, ps.lang('Warn.lockhouse.notSpawn'), 'error')
         return
     end
     TriggerClientEvent('md-houseRobberies:client:smokeBomb', -1, house)
@@ -264,7 +264,7 @@ RegisterNetEvent('md-houseRobberies:server:failMini', function(house)
     if not checkproperHouse(src, house) then return end
 
     if not ps.removeItem(src, Config.TierData[Houses[house].tier].robGameItem, 1) then
-        ps.warn(ps.getPlayerName(src) .. ' Is Trying To Exploit The Fail Mini Event | Does Not Have The Required Item But Had It On Client Check: ', Config.TierData[Houses[house].tier].robGameItem)
+        ps.warn(ps.lang('Warn.minigame.failed', ps.getPlayerName(src), Config.TierData[Houses[house].tier].robGameItem))
         return
     end
 end)

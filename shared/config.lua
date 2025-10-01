@@ -1,6 +1,6 @@
 Config = {}
 ps = exports.ps_lib:init()
-
+ps.loadLangs('en')
 
 Config.Dispatch = 'ps' -- either ps/aty/qs/core/cd
 Config.Minigames = {

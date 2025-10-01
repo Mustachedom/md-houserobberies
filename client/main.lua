@@ -19,15 +19,15 @@ local function spawnLoot(house)
         Freeze(loot[house][#loot[house]], true, value.rotation)
         ps.entityTarget(loot[house][#loot[house]], {
             {
-                label = 'Search ' .. value.type,
-                icon = 'fa-solid fa-box-open',
+                label = ps.lang('Targets.search',value.type),
+                icon = ps.lang('Targets.searchIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                     if not minigame(Config.TierData[tier].robGame) then
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
-                    if not ps.progressbar('Stealing Loot', Config.TierData[tier].progressbarRob, 'uncuff') then
+                    if not ps.progressbar(ps.lang('Progress.searching'), Config.TierData[tier].progressbarRob, 'uncuff') then
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
@@ -60,10 +60,10 @@ local function beATotalAsshole(ped)
         if DoesEntityExist(ped) and IsEntityDead(ped) then
             ps.entityTarget(ped, {
                 {
-                    label = 'hide body',
-                    icon = 'fa-solid fa-box-open',
+                    label = ps.lang('Targets.hideBody'),
+                    icon = ps.lang('Targets.hideBodyIcon'),
                     action = function()
-                        if not ps.progressbar('Hiding Body', 5000, 'uncuff') then
+                        if not ps.progressbar(ps.lang('Progress.hidingBody'), 5000, 'uncuff') then
                             return
                         end
                         if DoesEntityExist(ped) then
@@ -109,13 +109,13 @@ local function initTargets()
         local off = Config.TierData[v.tier].offset
         ps.boxTarget('mdhouseRob'..k, v.coords, {}, {
             {
-                label = 'Rob House',
-                icon = 'fa-solid fa-house',
+                label = ps.lang('Targets.robHouse'),
+                icon = ps.lang('Targets.robHouseIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
                     local copCheck = ps.callback('md-houserobberies:server:GetCoppers', k)
                     if copCheck < Config.TierData[v.tier].police then
-                        ps.notify('Not Enough Cops To Do This', 'error')
+                        ps.notify(ps.lang('Error.notEnoughCops'), 'error')
                         TriggerServerEvent('md-houseRobberies:server:busyState', k)
                         return
                     end
@@ -123,7 +123,7 @@ local function initTargets()
                     PoliceCall(Config.TierData[v.tier].policeCallChance)
 
                     if not ps.hasItem(Config.TierData[v.tier].breakInItem) then
-                        ps.notify('You Do Not Have The Required Item: ' .. Config.TierData[v.tier].breakInItem, 'error')
+                        ps.notify(ps.lang('Error.dontHaveItem', Config.TierData[v.tier].breakInItem), 'error')
                         TriggerServerEvent('md-houseRobberies:server:busyState', k)
                         return
                     end
@@ -148,8 +148,8 @@ local function initTargets()
                 end,
             },
             {
-                label = 'Enter Broken In House',
-                icon = 'fa-solid fa-house',
+                label = ps.lang('Targets.enterHome'),
+                icon = ps.lang('Targets.enterHomeIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:enterHouse', k)
                     SetEntityCoords(PlayerPedId(), vector3(v.coords.x + off.x, v.coords.y + off.y, v.coords.z + off.z - 145.0))
@@ -164,8 +164,8 @@ local function initTargets()
                 end,
             },
             {
-                label = 'Lock House',
-                icon = 'fa-solid fa-house',
+                label = ps.lang('Targets.lockDoor'),
+                icon = ps.lang('Targets.lockDoorIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
                     TriggerServerEvent('md-houseRobberies:server:lockHouse', k)
@@ -180,8 +180,8 @@ local function initTargets()
                 end,
             },
             {
-                label = 'Throw Smoke Bomb',
-                icon = 'fa-solid fa-house',
+                label = ps.lang('Targets.smokeBomb'),
+                icon = ps.lang('Targets.smokeBombIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:smokeBomb', k)
                 end,
@@ -196,8 +196,8 @@ local function initTargets()
         })
         ps.boxTarget('mdHRexit'..k, vector3(v.coords.x + off.x, v.coords.y + off.y, v.coords.z + off.z - 145.0), {}, {
             {
-                label = 'leave House',
-                icon = 'fa-solid fa-house',
+                label = ps.lang('Targets.leaveHouse'),
+                icon = ps.lang('Targets.leaveHouseIcon'),
                 action = function()
                     SetEntityCoords(PlayerPedId(), v.coords)
                     for i = 1, #loot[k] do
@@ -253,8 +253,8 @@ local function spawnFence()
         GiveWeaponToPed(peds[#peds], 'weapon_pistol', 255, false, true)
         ps.entityTarget(peds[#peds], {
             {
-                label = 'Sell Loot',
-                icon = 'fa-solid fa-hand-holding-dollar',
+                label = ps.lang('Targets.sellLoot'),
+                icon = ps.lang('Targets.sellLootIcon'),
                 action = function()
                     local itemList = ps.callback('md-houserobberies:server:getLootItems', k)
                     local menu = {}
@@ -263,7 +263,7 @@ local function spawnFence()
                             menu[#menu+1] = {
                                 title = ps.getLabel(item),
                                 icon = ps.getImage(item),
-                                description = '$' .. values.price,
+                                description = ps.lang('Info.currency') .. values.price,
                                 action = function()
                                     TriggerServerEvent('md-houseRobberies:server:sellLoot', k, item)
                                 end
@@ -271,10 +271,10 @@ local function spawnFence()
                         end
                     end
                     if #menu < 1 then
-                        ps.notify('You do not have any items to sell', 'error')
+                        ps.notify(ps.lang('Error.dontHaveLoot'), 'error')
                         return
                     end
-                    ps.menu('House Robbery Fence', 'House Robbery Fence', menu)
+                    ps.menu(ps.lang('Menu.fence'), ps.lang('Menu.fence'), menu)
                 end,
             }
         })
