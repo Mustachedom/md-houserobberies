@@ -131,3 +131,8 @@ Config.TierData = {
         }
     }
 }
+
+Config.RobbedRandomLocs = {
+    vector3(984.76, 3579.28, 33.64),
+    vector3(899.73, 3561.92, 34.57)
+}

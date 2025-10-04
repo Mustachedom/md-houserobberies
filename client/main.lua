@@ -255,6 +255,7 @@ local function spawnFence()
             {
                 label = ps.lang('Targets.sellLoot'),
                 icon = ps.lang('Targets.sellLootIcon'),
+                distance = 2.0,
                 action = function()
                     local itemList = ps.callback('md-houserobberies:server:getLootItems', k)
                     local menu = {}
@@ -293,4 +294,15 @@ RegisterNetEvent('md-houseRobberies:client:fenceRobbery', function(loc)
     ClearPedTasks(peds[loc])
     StopAnimTask(PlayerPedId(),'missminuteman_1ig_2', 'handsup_base', 1.0)
     ClearPedTasks(PlayerPedId())
+    ps.requestAnim('melee@pistol@streamed_fps', 10000)
+    TaskPlayAnim(peds[loc], 'melee@pistol@streamed_fps', 'pistol_idle_whip', 8.0, -8.0, -1, 49, 0, false, false, false)
+    Wait(500)
+    StopAnimTask(peds[loc],'melee@pistol@streamed_fps', 'pistol_idle_whip', 1.0)
+    ClearPedTasks(peds[loc])
+    tele(Config.RobbedRandomLocs[math.random(1, #Config.RobbedRandomLocs)])
+    ps.requestAnim('switch@franklin@bed', 10000)
+    TaskPlayAnim(PlayerPedId(), 'switch@franklin@bed', 'sleep_getup_rubeyes', 100.0, 1.0, -1, 8, -1, 0, 0, 0)
+    Wait(4000)
+    ClearPedTasks(PlayerPedId())
 end)
+
