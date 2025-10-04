@@ -1,6 +1,5 @@
 local insideHouse = {}
 
-
 ps.registerCallback('md-houserobberies:server:getLootItems', function(source, loc)
     local src = source
     if not ps.checkDistance(src, fencePeds[loc].coords, 5.0) then

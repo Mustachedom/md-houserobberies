@@ -22,14 +22,14 @@ Config.Minigames = {
 
 Config.TierData = {
     {
-        offset = {x = -1.5, y = -2.0, z = 3.0},
-        ped = {pedModel = 'ig_priest', loc = vector3(4.0, 0.0, 3.0), weapon = 'WEAPON_PISTOL', chance = 100},
-        police = 0,
-        policeCallChance = 20,
-        robGame = 'ps_circle',
-        progressbarRob = 8000,
-        breakInGame = 'ps_circle',
-        breakInItem = 'lockpick',
+        offset = {x = -1.5, y = -2.0, z = 3.0}, -- this is front door
+        ped = {pedModel = 'ig_priest', loc = vector3(4.0, 0.0, 3.0), weapon = 'WEAPON_PISTOL', chance = 100}, -- if you dont want a ped make chance 0
+        police = 0, -- police required to break in 
+        policeCallChance = 20, -- chance dispatch alert is sent out
+        robGame = 'ps_circle', -- minigame to use for robbing
+        progressbarRob = 8000, -- time in ms for robbing loot 
+        breakInGame = 'ps_circle', -- minigame to use for breaking in
+        breakInItem = 'lockpick', -- item required to break in
         export = {
             func = function(coords)
                 return exports['qb-interior']:CreateCaravanShell(coords)
@@ -44,6 +44,7 @@ Config.TierData = {
         ped = {pedModel = 'ig_priest', loc = vector3(1.7, 1.0, 1.0), weapon = 'WEAPON_PISTOL', chance = 30},
         police = 2,
         policeCallChance = 30,
+        robGame = 'ps_circle',
         progressbarRob = 10000,
         breakInGame = 'ps_maze',
         breakInItem = 'lockpick',
@@ -61,6 +62,7 @@ Config.TierData = {
         ped = {pedModel = 'ig_priest', loc = vector3(3.0, 0.0, 3.0),weapon = 'WEAPON_PISTOL', chance = 40},
         police = 3,
         policeCallChance = 40,
+        robGame = 'ps_circle',
         progressbarRob = 12000,
         breakInGame = 'ps_scrambler',
         breakInItem = 'advancedlockpick',
@@ -78,6 +80,7 @@ Config.TierData = {
         ped = {pedModel = 'ig_priest', loc = vector3(2.3, -0.0, 1.0),weapon = 'WEAPON_PISTOL', chance = 50},
         police = 4,
         policeCallChance = 50,
+        robGame = 'ps_circle',
         progressbarRob = 15000,
         breakInGame = 'ps_var',
         breakInItem = 'advancedlockpick',
@@ -95,6 +98,7 @@ Config.TierData = {
         ped = {pedModel = 'ig_priest', loc = vector3(0.0, 0.0, 1.5),weapon = 'WEAPON_PISTOL', chance = 70},
         police = 5,
         policeCallChance = 60,
+        robGame = 'ps_circle',
         progressbarRob = 18000,
         breakInGame = 'ps_thermite',
         breakInItem = 'houselaptop',
@@ -112,6 +116,7 @@ Config.TierData = {
         ped = {pedModel = 'ig_priest', loc = vector3(-8.0, 1.0, 14.5),weapon = 'WEAPON_PISTOL', chance = 90},
         police = 6,
         policeCallChance = 70,
+        robGame = 'ps_circle',
         progressbarRob = 20000,
         breakInGame = 'ox',
         breakInItem = 'houselaptop',
