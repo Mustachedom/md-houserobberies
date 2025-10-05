@@ -2,7 +2,7 @@ Config = {}
 ps = exports.ps_lib:init()
 ps.loadLangs('en')
 
-Config.Dispatch = 'ps' -- either ps/aty/qs/core/cd
+Config.Dispatch = 'ps' -- either ps/aty/core/cd
 Config.Minigames = {
     ps_circle =            {    amount = 2,     speed = 8,},
     ps_maze =            {    timelimit = 15},
@@ -132,7 +132,7 @@ Config.TierData = {
     }
 }
 
-Config.RobbedRandomLocs = {
+Config.RobbedRandomLocs = { -- if robbed by fence they will be teleported to one of these locations
     vector3(984.76, 3579.28, 33.64),
     vector3(899.73, 3561.92, 34.57)
 }

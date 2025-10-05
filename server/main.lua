@@ -52,9 +52,6 @@ ps.registerCallback('md-houseRobberies:server:getHouses', function()
     return Houses
 end)
 
-for k, v in pairs(GlobalState.HouseRobbery) do
-    insideHouse[k] = {}
-end
 
 local function removeHouse(house)
     CreateThread(function()
@@ -156,29 +153,29 @@ RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
     end
 
     if not home.loot[lootKey] then
-        table.insert(reasons, 'This Loot Does Not Exist')
+        table.insert(reasons, ps.lang('Warn.takeLootEvent.lootDoesntExist'))
         catch = catch + 1
     end
 
     if home.loot[lootKey].taken then
-        table.insert(reasons, 'This Loot Has Already Been Taken')
+        table.insert(reasons, ps.lang('Warn.takeLootEvent.lootTaken'))
         catch = catch + 1
     end
 
     if not insideHouse[house][ps.getIdentifier(src)] then
-        table.insert(reasons, 'You Are Not Inside The House')
+        table.insert(reasons, ps.lang('Warn.takeLootEvent.notInside'))
         catch = catch + 1
     end
 
     if home.loot[lootKey].busy then
         catch = catch + 1
-        table.insert(reasons, 'This Loot Is Not Being Robbed')
+        table.insert(reasons, ps.lang('Warn.takeLootEvent.lootBusy'))
     end
 
     local copCheck = ps.getJobTypeCount('leo')
     if copCheck < Config.TierData[home.tier].police then
         catch = catch + 1
-        table.insert(reasons, 'Not Enough Cops To Do This')
+        table.insert(reasons, ps.lang('Warn.takeLootEvent.notEnoughCops'))
     end
 
     if catch > 0 then
@@ -267,3 +264,10 @@ RegisterNetEvent('md-houseRobberies:server:failMini', function(house)
         return
     end
 end)
+
+repeat
+    Wait(100)
+until GlobalState.HouseRobbery
+for k, v in pairs(GlobalState.HouseRobbery) do
+    insideHouse[k] = {}
+end
