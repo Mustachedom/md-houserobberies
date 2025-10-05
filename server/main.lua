@@ -190,7 +190,7 @@ RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
     GlobalState.HouseRobbery = Houses
     TriggerClientEvent('md-houseRobberies:client:syncLoot', -1, house, lootKey)
 end)
-
+ps.versionCheck('md-houserobberies', 'https://raw.githubusercontent.com/Mustachedom/md-houserobberies/refs/heads/main/version.txt', 'https://github.com/Mustachedom/md-houserobberies'  )
 ps.registerCallback('md-houserobberies:server:GetCoppers', function(source, house)
    local src = source
    if not ps.checkDistance(src, Houses[house].coords, 5.0) then
