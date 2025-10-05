@@ -205,6 +205,7 @@ local function initTargets()
                             DeleteEntity(loot[k][i])
                         end
                     end
+                    loot[k] = {}
                     TriggerServerEvent('md-houseRobberies:server:leaveHouse', k)
                 end,
             }
