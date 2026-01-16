@@ -45,7 +45,7 @@ local dispatch = Config.Dispatch
 	elseif tier == 'none' then 
 		return true
 	else
-		ps.warn(ps.lang('Error.noGame'))
+		Bridge.Prints.Warn(Bridge.Language.Locale('Error.noGame'))
 	end
  end
 
@@ -81,7 +81,7 @@ function PoliceCall(chance)
 		elseif dispatch == 'aty' then 
 			exports["aty_dispatch"]:SendDispatch('House Robbery', '420-69', 40, {'police'})
 		else
-			ps.warn(ps.lang('Error.noDispatch'))
+			Bridge.Prints.Warn(Bridge.Language.Locale('Error.noDispatch'))
 		end
 	else
 	end

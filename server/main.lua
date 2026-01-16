@@ -1,36 +1,47 @@
 local insideHouse = {}
 
-ps.registerCallback('md-houserobberies:server:getLootItems', function(source, loc)
+local function checkDistance(source, coords, dist)
     local src = source
-    if not ps.checkDistance(src, fencePeds[loc].coords, 5.0) then
+    local playerCoords = GetEntityCoords(GetPlayerPed(src))
+    local distance = #(playerCoords - coords)
+    if distance > dist then
+        Bridge.Prints.Warn(Bridge.Language.Locale('Warn.distanceCheckFail', Bridge.Framework.GetPlayerIdentifier(src)))
+        return false
+    end
+    return true
+end
+
+Bridge.Callback.Register('md-houserobberies:server:getLootItems', function(source, loc)
+    local src = source
+    if not checkDistance(src, fencePeds[loc].coords, 5.0) then
         return false
     end
     return fenceItems
 end)
 
-ps.registerCallback('md-houserobberies:server:GetFence', function() return fencePeds end)
+Bridge.Callback.Register('md-houserobberies:server:GetFence', function() return fencePeds end)
 
 RegisterNetEvent('md-houseRobberies:server:sellLoot', function(loc, item)
     local src = source
-    if not ps.checkDistance(src, fencePeds[loc].coords, 5.0) then
+    if not checkDistance(src, fencePeds[loc].coords, 5.0) then
         return
     end
 
     local itemCount = ps.getItemCount(src, item)
     if itemCount < 1 then
-        ps.notify(src, ps.lang('Error.dontHaveSale', item), 'error')
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Error.dontHaveSale', item), 'error')
         return
     end
 
     if not fenceItems[item] then
-        ps.warn(ps.lang('Warn.fence.wrongItem', ps.getPlayerName(src), item))
+        Bridge.Prints.Warn(Bridge.Language.Locale('Warn.fence.wrongItem', Bridge.Framework.GetPlayerIdentifier(src), item))
         return
     end
 
     if math.random(1, 100) <= fenceItems[item].robChance then
         TriggerClientEvent('md-houseRobberies:client:fenceRobbery', src, loc)
         ps.removeItem(src, item, itemCount)
-        ps.notify(src, ps.lang('Error.robbed', ps.getItemLabel(item)), 'error')
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Error.robbed', ps.getItemLabel(item)), 'error')
         return
     end
 
@@ -48,7 +59,7 @@ local function generateLoot(tier, room)
     return lootItem
 end
 
-ps.registerCallback('md-houseRobberies:server:getHouses', function()
+Bridge.Callback.Register('md-houseRobberies:server:getHouses', function()
     return Houses
 end)
 
@@ -74,15 +85,15 @@ end
 local function checkproperHouse(src, house)
     local catch = 0
     if not Houses[house] then return false end
-    if not ps.checkDistance(src, vector3(Houses[house].coords.x, Houses[house].coords.y, Houses[house].coords.z - 145.0), 5.0) then
+    if not checkDistance(src, vector3(Houses[house].coords.x, Houses[house].coords.y, Houses[house].coords.z - 145.0), 20.0) then
         catch = catch + 1
-        if not ps.checkDistance(src, Houses[house].coords, 5.0) then
+        if not checkDistance(src, Houses[house].coords, 5.0) then
             catch = catch + 1
             return
         end
     end
     if catch == 2 then
-        ps.warn(ps.lang('Warn.faileddistChecks', ps.getPlayerName(src)))
+        Bridge.Prints.Warn(Bridge.Language.Locale('Warn.faileddistChecks', Bridge.Framework.GetPlayerIdentifier(src)))
         return
     end
     return true
@@ -92,8 +103,6 @@ RegisterNetEvent('md-houseRobberies:server:busyState', function(house)
     local src = source
     if not Houses[house] then return end
     if not checkproperHouse(src, house) then return end
-
-
     Houses[house].busy = not Houses[house].busy
     GlobalState.HouseRobbery = Houses
 end)
@@ -142,58 +151,58 @@ RegisterNetEvent('md-houseRobberies:server:takeLoot', function(house, lootKey)
     local trueLocation = vector3((houseCoords.x + objectCoords.x), (houseCoords.y + objectCoords.y), (houseCoords.z + objectCoords.z))
     local catch = 0
     local reasons = {}
-    if not ps.checkDistance(src, trueLocation, 5.0) then
-        table.insert(reasons, ps.lang('Warn.takeLootEvent.dist'))
+    if not checkDistance(src, trueLocation, 5.0) then
+        table.insert(reasons, Bridge.Language.Locale('Warn.takeLootEvent.dist'))
         catch = catch + 1
     end
 
     if not home.spawned then
-        table.insert(reasons, ps.lang('Warn.takeLootEvent.notSpawn'))
+        table.insert(reasons, Bridge.Language.Locale('Warn.takeLootEvent.notSpawn'))
         catch = catch + 1
     end
 
     if not home.loot[lootKey] then
-        table.insert(reasons, ps.lang('Warn.takeLootEvent.lootDoesntExist'))
+        table.insert(reasons, Bridge.Language.Locale('Warn.takeLootEvent.lootDoesntExist'))
         catch = catch + 1
     end
 
     if home.loot[lootKey].taken then
-        table.insert(reasons, ps.lang('Warn.takeLootEvent.lootTaken'))
+        table.insert(reasons, Bridge.Language.Locale('Warn.takeLootEvent.lootTaken'))
         catch = catch + 1
     end
 
     if not insideHouse[house][ps.getIdentifier(src)] then
-        table.insert(reasons, ps.lang('Warn.takeLootEvent.notInside'))
+        table.insert(reasons, Bridge.Language.Locale('Warn.takeLootEvent.notInside'))
         catch = catch + 1
     end
 
     if home.loot[lootKey].busy then
         catch = catch + 1
-        table.insert(reasons, ps.lang('Warn.takeLootEvent.lootBusy'))
+        table.insert(reasons, Bridge.Language.Locale('Warn.takeLootEvent.lootBusy'))
     end
 
     local copCheck = ps.getJobTypeCount('leo')
     if copCheck < Config.TierData[home.tier].police then
         catch = catch + 1
-        table.insert(reasons, ps.lang('Warn.takeLootEvent.notEnoughCops'))
+        table.insert(reasons, Bridge.Language.Locale('Warn.takeLootEvent.notEnoughCops'))
     end
 
     if catch > 0 then
-        ps.warn(ps.lang('Warn.takeLootEvent.main', ps.getPlayerName(src)), table.concat(reasons, ', '))
+        Bridge.Prints.Warn(Bridge.Language.Locale('Warn.takeLootEvent.main', Bridge.Framework.GetPlayerIdentifier(src)), table.concat(reasons, ', '))
         return
     end
 
     local itemGiven = generateLoot(home.tier, home.loot[lootKey].type)
-    ps.addItem(src, itemGiven.item, itemGiven.amount)
+    Bridge.Inventory.AddItem(src, itemGiven.item, itemGiven.amount)
     home.loot[lootKey].taken = true
     home.loot[lootKey].busy = false
     GlobalState.HouseRobbery = Houses
     TriggerClientEvent('md-houseRobberies:client:syncLoot', -1, house, lootKey)
 end)
-ps.versionCheck('md-houserobberies', 'https://raw.githubusercontent.com/Mustachedom/md-houserobberies/refs/heads/main/version.txt', 'https://github.com/Mustachedom/md-houserobberies'  )
-ps.registerCallback('md-houserobberies:server:GetCoppers', function(source, house)
+
+Bridge.Callback.Register('md-houserobberies:server:GetCoppers', function(source, house)
    local src = source
-   if not ps.checkDistance(src, Houses[house].coords, 5.0) then
+   if not checkDistance(src, Houses[house].coords, 5.0) then
        return -1
    end
    return ps.getJobTypeCount('leo')
@@ -203,20 +212,20 @@ RegisterNetEvent('md-houseRobberies:server:lockHouse', function(house)
     local src = source
     local home = Houses[house]
     if not home then return end
-    local jobType = ps.getJobType(src)
+    local jobName = Bridge.Framework.GetJobData(src).jobName
 
-    if jobType ~= 'leo' then
-        ps.notify(src, ps.lang('Warn.lockhouse.notCop'), 'error')
+    if jobName ~= 'police' then
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Warn.lockhouse.notCop'), 'error')
         return
     end
     
-    if not ps.checkDistance(src, home.coords, 5.0) then
-        ps.notify(src, ps.lang('Warn.lockhouse.dist'), 'error')
+    if not checkDistance(src, home.coords, 5.0) then
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Warn.lockhouse.dist'), 'error')
         return
     end
 
     if not home.spawned then
-        ps.notify(src, ps.lang('Warn.lockhouse.notSpawn'), 'error')
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Warn.lockhouse.notSpawn'), 'error')
         return
     end
 
@@ -235,20 +244,20 @@ end)
 
 RegisterNetEvent('md-houseRobberies:server:smokeBomb', function(house)
     local src = source
-    local jobType = ps.getJobType(src)
+    local jobName = Bridge.Framework.GetJobData(src).jobName
 
-    if jobType ~= 'leo' then
-        ps.notify(src, ps.lang('Warn.lockhouse.notCop'), 'error')
+    if jobName ~= 'police' then
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Warn.lockhouse.notCop'), 'error')
         return
     end
 
     if not Houses[house] then return end
-    if not ps.checkDistance(src, Houses[house].coords, 5.0) then
-        ps.notify(src, ps.lang('Warn.lockhouse.dist'), 'error')
+    if not checkDistance(src, Houses[house].coords, 5.0) then
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Warn.lockhouse.dist'), 'error')
         return
     end
     if not Houses[house].spawned then
-        ps.notify(src, ps.lang('Warn.lockhouse.notSpawn'), 'error')
+        Bridge.Notify.SendNotify(src, Bridge.Language.Locale('Warn.lockhouse.notSpawn'), 'error')
         return
     end
     TriggerClientEvent('md-houseRobberies:client:smokeBomb', -1, house)
@@ -259,8 +268,8 @@ RegisterNetEvent('md-houseRobberies:server:failMini', function(house)
     if not Houses[house] then return end
     if not checkproperHouse(src, house) then return end
 
-    if not ps.removeItem(src, Config.TierData[Houses[house].tier].robGameItem, 1) then
-        ps.warn(ps.lang('Warn.minigame.failed', ps.getPlayerName(src), Config.TierData[Houses[house].tier].robGameItem))
+    if not Bridge.Inventory.RemoveItem(src, Config.TierData[Houses[house].tier].robGameItem, 1) then
+        Bridge.Prints.Warn(Bridge.Language.Locale('Warn.minigame.failed', Bridge.Framework.GetPlayerIdentifier(src), Config.TierData[Houses[house].tier].robGameItem))
         return
     end
 end)

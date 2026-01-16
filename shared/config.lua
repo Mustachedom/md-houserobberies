@@ -1,7 +1,7 @@
 Config = {}
 ps = exports.ps_lib:init()
 ps.loadLangs('en')
-
+Bridge = exports.community_bridge:Bridge()
 Config.Dispatch = 'ps' -- either ps/aty/core/cd
 Config.Minigames = {
     ps_circle =            {    amount = 2,     speed = 8,},

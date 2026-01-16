@@ -9,25 +9,39 @@ for k, v in pairs(GlobalState.HouseRobbery) do
     loot[k] = {}
 end
 
+local function requestModel(model, timeout)
+    local modelHash =  GetHashKey(model)
+    if not HasModelLoaded(modelHash) then
+        RequestModel(modelHash)
+        local start = GetGameTimer()
+        while not HasModelLoaded(modelHash) do
+            Wait(10)
+            if GetGameTimer() - start >= timeout then
+                return false
+            end
+        end
+    end
+    return true
+end
 local function spawnLoot(house)
     for lootKey, value in pairs (GlobalState.HouseRobbery[house].loot) do
         if value.taken then goto continue end
         local coords = vector3(GlobalState.HouseRobbery[house].coords.x, GlobalState.HouseRobbery[house].coords.y, GlobalState.HouseRobbery[house].coords.z - 145.0)
         local tier = GlobalState.HouseRobbery[house].tier
-        ps.requestModel(value.prop, 10000)
+        requestModel(value.prop, 10000)
         loot[house][#loot[house]+1] = CreateObject(value.prop, coords.x + value.coords.x, coords.y + value.coords.y, coords.z + value.coords.z, false, false, false)
         Freeze(loot[house][#loot[house]], true, value.rotation)
-        ps.entityTarget(loot[house][#loot[house]], {
+        Bridge.Target.AddLocalEntity(loot[house][#loot[house]], {
             {
-                label = ps.lang('Targets.search',value.type),
-                icon = ps.lang('Targets.searchIcon'),
+                label = Bridge.Language.Locale('Targets.search',value.type),
+                icon = Bridge.Language.Locale('Targets.searchIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                     if not minigame(Config.TierData[tier].robGame) then
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
-                    if not ps.progressbar(ps.lang('Progress.searching'), Config.TierData[tier].progressbarRob, 'uncuff') then
+                    if not ps.progressbar(Bridge.Language.Locale('Progress.searching'), Config.TierData[tier].progressbarRob, 'uncuff') then
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
@@ -58,12 +72,12 @@ local function beATotalAsshole(ped)
             DeleteEntity(ped)
         end
         if DoesEntityExist(ped) and IsEntityDead(ped) then
-            ps.entityTarget(ped, {
+            Bridge.Target.AddLocalEntity(ped, {
                 {
-                    label = ps.lang('Targets.hideBody'),
-                    icon = ps.lang('Targets.hideBodyIcon'),
+                    label = Bridge.Language.Locale('Targets.hideBody'),
+                    icon = Bridge.Language.Locale('Targets.hideBodyIcon'),
                     action = function()
-                        if not ps.progressbar(ps.lang('Progress.hidingBody'), 5000, 'uncuff') then
+                        if not ps.progressbar(Bridge.Language.Locale('Progress.hidingBody'), 5000, 'uncuff') then
                             return
                         end
                         if DoesEntityExist(ped) then
@@ -80,7 +94,7 @@ local function spawnPed(coords, tier)
     local pedData = Config.TierData[tier].ped
     local pedModel = pedData.pedModel
     local loc = pedData.loc
-    ps.requestModel(pedModel, 10000)
+    requestModel(pedModel, 10000)
     ps.debug(coords.x + loc.x .. ' ' .. coords.y + loc.y .. ' ' .. coords.z + loc.z)
     local ped = CreatePed(4, pedModel, coords.x + loc.x, coords.y + loc.y, coords.z + loc.z, 0.0, false, false)
     GiveWeaponToPed(ped, pedData.weapon, 255, false, true)
@@ -109,13 +123,13 @@ local function initTargets()
         local off = Config.TierData[v.tier].offset
         ps.boxTarget('mdhouseRob'..k, v.coords, {}, {
             {
-                label = ps.lang('Targets.robHouse'),
-                icon = ps.lang('Targets.robHouseIcon'),
+                label = Bridge.Language.Locale('Targets.robHouse'),
+                icon = Bridge.Language.Locale('Targets.robHouseIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
-                    local copCheck = ps.callback('md-houserobberies:server:GetCoppers', k)
+                    local copCheck = Bridge.Callback.Trigger('md-houserobberies:server:GetCoppers', k)
                     if copCheck < Config.TierData[v.tier].police then
-                        ps.notify(ps.lang('Error.notEnoughCops'), 'error')
+                        Bridge.Notify.SendNotify(Bridge.Language.Locale('Error.notEnoughCops'), 'error')
                         TriggerServerEvent('md-houseRobberies:server:busyState', k)
                         return
                     end
@@ -123,7 +137,7 @@ local function initTargets()
                     PoliceCall(Config.TierData[v.tier].policeCallChance)
 
                     if not ps.hasItem(Config.TierData[v.tier].breakInItem) then
-                        ps.notify(ps.lang('Error.dontHaveItem', Config.TierData[v.tier].breakInItem), 'error')
+                        Bridge.Notify.SendNotify(Bridge.Language.Locale('Error.dontHaveItem', Config.TierData[v.tier].breakInItem), 'error')
                         TriggerServerEvent('md-houseRobberies:server:busyState', k)
                         return
                     end
@@ -148,8 +162,8 @@ local function initTargets()
                 end,
             },
             {
-                label = ps.lang('Targets.enterHome'),
-                icon = ps.lang('Targets.enterHomeIcon'),
+                label = Bridge.Language.Locale('Targets.enterHome'),
+                icon = Bridge.Language.Locale('Targets.enterHomeIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:enterHouse', k)
                     SetEntityCoords(PlayerPedId(), vector3(v.coords.x + off.x, v.coords.y + off.y, v.coords.z + off.z - 145.0))
@@ -164,8 +178,8 @@ local function initTargets()
                 end,
             },
             {
-                label = ps.lang('Targets.lockDoor'),
-                icon = ps.lang('Targets.lockDoorIcon'),
+                label = Bridge.Language.Locale('Targets.lockDoor'),
+                icon = Bridge.Language.Locale('Targets.lockDoorIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
                     TriggerServerEvent('md-houseRobberies:server:lockHouse', k)
@@ -180,8 +194,8 @@ local function initTargets()
                 end,
             },
             {
-                label = ps.lang('Targets.smokeBomb'),
-                icon = ps.lang('Targets.smokeBombIcon'),
+                label = Bridge.Language.Locale('Targets.smokeBomb'),
+                icon = Bridge.Language.Locale('Targets.smokeBombIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:smokeBomb', k)
                 end,
@@ -196,8 +210,8 @@ local function initTargets()
         })
         ps.boxTarget('mdHRexit'..k, vector3(v.coords.x + off.x, v.coords.y + off.y, v.coords.z + off.z - 145.0), {}, {
             {
-                label = ps.lang('Targets.leaveHouse'),
-                icon = ps.lang('Targets.leaveHouseIcon'),
+                label = Bridge.Language.Locale('Targets.leaveHouse'),
+                icon = Bridge.Language.Locale('Targets.leaveHouseIcon'),
                 action = function()
                     SetEntityCoords(PlayerPedId(), v.coords)
                     for i = 1, #loot[k] do
@@ -245,27 +259,27 @@ end)
 local peds = {}
 
 local function spawnFence()
-    local fence = ps.callback('md-houserobberies:server:GetFence')
+    local fence = Bridge.Callback.Trigger('md-houserobberies:server:GetFence')
     for k, v in pairs (fence) do
-        ps.requestModel(v.ped, 10000)
+        requestModel(v.ped, 10000)
         peds[#peds+1] = CreatePed(4, v.ped, v.coords.x, v.coords.y, v.coords.z, v.coords.w, false, false)
         SetEntityInvincible(peds[#peds], true)
         FreezeEntityPosition(peds[#peds], true)
         GiveWeaponToPed(peds[#peds], 'weapon_pistol', 255, false, true)
-        ps.entityTarget(peds[#peds], {
+        Bridge.Target.AddLocalEntity(peds[#peds], {
             {
-                label = ps.lang('Targets.sellLoot'),
-                icon = ps.lang('Targets.sellLootIcon'),
+                label = Bridge.Language.Locale('Targets.sellLoot'),
+                icon = Bridge.Language.Locale('Targets.sellLootIcon'),
                 distance = 2.0,
                 action = function()
-                    local itemList = ps.callback('md-houserobberies:server:getLootItems', k)
+                    local itemList = Bridge.Callback.Trigger('md-houserobberies:server:getLootItems', k)
                     local menu = {}
                     for item, values in pairs(itemList) do
                         if ps.hasItem(item) then
                             menu[#menu+1] = {
                                 title = ps.getLabel(item),
                                 icon = ps.getImage(item),
-                                description = ps.lang('Info.currency') .. values.price,
+                                description = Bridge.Language.Locale('Info.currency') .. values.price,
                                 action = function()
                                     TriggerServerEvent('md-houseRobberies:server:sellLoot', k, item)
                                 end
@@ -273,10 +287,10 @@ local function spawnFence()
                         end
                     end
                     if #menu < 1 then
-                        ps.notify(ps.lang('Error.dontHaveLoot'), 'error')
+                        Bridge.Notify.SendNotify(Bridge.Language.Locale('Error.dontHaveLoot'), 'error')
                         return
                     end
-                    ps.menu(ps.lang('Menu.fence'), ps.lang('Menu.fence'), menu)
+                    ps.menu(Bridge.Language.Locale('Menu.fence'), Bridge.Language.Locale('Menu.fence'), menu)
                 end,
             }
         })
