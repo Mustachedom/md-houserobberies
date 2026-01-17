@@ -14,7 +14,7 @@ If you need support, join the discord :)
 
 | Dependency | Link |
 |----------|------|
-| `ps_lib` | [GitHub - Project-Sloth/ps_lib](https://github.com/Project-Sloth/ps_lib) |
+| `Community_Bridge` | [Community_Bridge Link](https://github.com/TheOrderFivem/community_bridge/releases/) |
 | `qb-interior`| [github](https://github.com/qbcore-framework/qb-interior) - it works standalone regardless of framework :) |
 | `Read`   | [Read Docs](https://letters.hookedonphonics.com/us/read-guaranteed-G14.html) |
 
