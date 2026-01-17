@@ -202,7 +202,7 @@ Houses = {
 }
 GlobalState.HouseRobbery = Houses
 Rewards = { 
-    {
+    { -- tier 1
         cabinet = {
             {item = "bandage", amount = 1},    {item = "diamond_ring", amount = 2}, {item = "goldchain", amount = 1},
             {item = "weed_skunk", amount = 1}, {item = "thermite", amount = 1},     {item = "cryptostick", amount = 1}
@@ -215,8 +215,8 @@ Rewards = {
             {item = "goldchain", amount = 1},   {item = "thermite", amount = 1}, {item = "cryptostick", amount = 1}, 
             {item = "tablet", amount = 1}, {item = "pistol_ammo", amount = 1}
         }
-    },
-    {
+    }, 
+    { -- tier 2
         cabin = { 
             {item = "advancedlockpick", amount = 1}, {item = "diamond_ring", amount = 1}, {item = "goldchain", amount = 1}, 
             {item = "thermite", amount = 1}, {item = "cryptostick", amount = 1}, {item = "advancedrepairkit", amount = 1} 
@@ -229,7 +229,7 @@ Rewards = {
             {item = "goldchain", amount = 1}, {item = "xtcbaggy", amount = 1}, {item = "cryptostick", amount = 1}, {item = "weapon_knife", amount = 1} 
         }
     },
-    {
+    { -- tier 3
         art = { 
             {item = "art1", amount = 1}, {item = "art2", amount = 1}, {item = "goldchain", amount = 1} 
         },
@@ -246,7 +246,7 @@ Rewards = {
             {item = "phone", amount = 1}, {item = "pistol_ammo", amount = 1} 
         }
     },
-    {
+    { -- tier 4
         art = { 
             {item = "art1", amount = 1}, {item = "art2", amount = 1}, {item = "art3", amount = 1} 
         },
@@ -263,7 +263,7 @@ Rewards = {
             {item = "tablet", amount = 1}, {item = "pistol_ammo", amount = 1}, {item = "houselaptop", amount = 1}, {item = "mansionlaptop", amount = 1} 
         }
     },
-    {
+    { -- tier 5
         kitchen = { 
             {item = "tosti", amount = 1}, {item = "sandwich", amount = 1}, {item = "twerks_candy", amount = 1}, {item = "kurkakola", amount = 1} 
         },
@@ -277,7 +277,7 @@ Rewards = {
             {item = "tablet", amount = 1}, {item = "checkbook", amount = 1} 
         }
     },
-    {
+    { -- tier 6
         kitchen = {
             {item = "tosti", amount = 1}, {item = "sandwich", amount = 1}, {item = "goldchain", amount = 1} 
         },
@@ -327,4 +327,8 @@ fenceItems = {
    mddesktop =          { price = 30, robChance = 100, },
    mdmonitor =          { price = 30, robChance = 100, },
    checkbook =          { price = 30, robChance = 100, },
+}
+GlobalState.MDHouseRobberyFence = {
+    fencePeds = fencePeds,
+    fenceItems = fenceItems,
 }

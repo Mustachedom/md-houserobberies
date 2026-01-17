@@ -1,8 +1,9 @@
 Config = {}
-ps = exports.ps_lib:init()
-ps.loadLangs('en')
+
 Bridge = exports.community_bridge:Bridge()
 Config.Dispatch = 'ps' -- either ps/aty/core/cd
+Config.Emotes = 'rp' -- either rp/dp/scully/custom/none
+
 Config.Minigames = {
     ps_circle =            {    amount = 2,     speed = 8,},
     ps_maze =            {    timelimit = 15},

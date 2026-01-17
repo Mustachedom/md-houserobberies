@@ -19,6 +19,6 @@ server_script {
 }
 
 files {
-    'locales/**.lua',
+    'locales/**.json',
 }
 lua54 'yes'

@@ -23,17 +23,20 @@ local function requestModel(model, timeout)
     end
     return true
 end
+
 local function spawnLoot(house)
     for lootKey, value in pairs (GlobalState.HouseRobbery[house].loot) do
         if value.taken then goto continue end
-        local coords = vector3(GlobalState.HouseRobbery[house].coords.x, GlobalState.HouseRobbery[house].coords.y, GlobalState.HouseRobbery[house].coords.z - 145.0)
+        local houseCoords = GlobalState.HouseRobbery[house].coords
+        local coords = vector3(houseCoords.x, houseCoords.y, houseCoords.z - 145.0)
         local tier = GlobalState.HouseRobbery[house].tier
         requestModel(value.prop, 10000)
-        loot[house][#loot[house]+1] = CreateObject(value.prop, coords.x + value.coords.x, coords.y + value.coords.y, coords.z + value.coords.z, false, false, false)
+        local newCoords = vector3(coords.x + value.coords.x, coords.y + value.coords.y, coords.z + value.coords.z)
+        loot[house][#loot[house]+1] = CreateObject(value.prop, newCoords.x, newCoords.y, newCoords.z, false, false, false)
         Freeze(loot[house][#loot[house]], true, value.rotation)
         Bridge.Target.AddLocalEntity(loot[house][#loot[house]], {
             {
-                label = Bridge.Language.Locale('Targets.search',value.type),
+                label = Bridge.Language.Locale('Targets.search', value.type),
                 icon = Bridge.Language.Locale('Targets.searchIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
@@ -41,18 +44,24 @@ local function spawnLoot(house)
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
-                    if not ps.progressbar(Bridge.Language.Locale('Progress.searching'), Config.TierData[tier].progressbarRob, 'uncuff') then
+                    if not progressbar(Bridge.Language.Locale('Progress.searching'), Config.TierData[tier].progressbarRob, 'uncuff') then
                         TriggerServerEvent('md-houseRobberies:server:busyLoot', house, lootKey)
                         return
                     end
                     TriggerServerEvent('md-houseRobberies:server:takeLoot', house, lootKey)
                 end,
                 canInteract = function()
-                    if not GlobalState.HouseRobbery[house].loot[lootKey].taken and not GlobalState.HouseRobbery[house].loot[lootKey].busy then
-                        return true
-                    else
+                    if  GlobalState.HouseRobbery[house].loot[lootKey].taken then
                         return false
                     end
+                    if GlobalState.HouseRobbery[house].loot[lootKey].busy then
+                        return false
+                    end
+                    local job = Bridge.Framework.GetPlayerJob()
+                    if job == 'police' or job == 'ambulance' then
+                        return false
+                    end
+                    return true
                 end,
             }
         })
@@ -61,7 +70,7 @@ local function spawnLoot(house)
 end
 
 local function beATotalAsshole(ped)
-    local timeout = 60 * 5
+    local timeout = 1000 * 60 * 5
     CreateThread(function()
         repeat
             TaskCombatPed(ped, PlayerPedId(), 0, 16)
@@ -77,7 +86,7 @@ local function beATotalAsshole(ped)
                     label = Bridge.Language.Locale('Targets.hideBody'),
                     icon = Bridge.Language.Locale('Targets.hideBodyIcon'),
                     action = function()
-                        if not ps.progressbar(Bridge.Language.Locale('Progress.hidingBody'), 5000, 'uncuff') then
+                        if not progressbar(Bridge.Language.Locale('Progress.hidingBody'), 5000, 'uncuff') then
                             return
                         end
                         if DoesEntityExist(ped) then
@@ -92,26 +101,25 @@ end
 
 local function spawnPed(coords, tier)
     local pedData = Config.TierData[tier].ped
-    local pedModel = pedData.pedModel
     local loc = pedData.loc
-    requestModel(pedModel, 10000)
-    ps.debug(coords.x + loc.x .. ' ' .. coords.y + loc.y .. ' ' .. coords.z + loc.z)
-    local ped = CreatePed(4, pedModel, coords.x + loc.x, coords.y + loc.y, coords.z + loc.z, 0.0, false, false)
+
+    requestModel(pedData.pedModel, 10000)
+    local ped = CreatePed(4, pedData.pedModel, coords.x + loc.x, coords.y + loc.y, coords.z + loc.z, 0.0, false, false)
     GiveWeaponToPed(ped, pedData.weapon, 255, false, true)
     beATotalAsshole(ped)
 end
 
-local function spawnHouse(tier, coords)
+local function spawnHouse(tier, coords, house)
     local loc = vector3(coords.x, coords.y, coords.z - 145.0)
     local houseData = Config.TierData[tier].export.func(loc)
+
     CreateThread(function()
         Wait(1000 * 60 * 5)
         Config.TierData[tier].export.despawn(houseData, function()
-            if #(GetEntityCoords(PlayerPedId()) - loc) <= 15.0 then
-                SetEntityCoords(PlayerPedId(), coords)
-            end
+            TriggerServerEvent('md-houseRobberies:server:houseClosed', house)
         end)
     end)
+
     if Config.TierData[tier].ped.chance >= math.random(1,100) then
         spawnPed(loc, tier)
     end
@@ -121,12 +129,13 @@ end
 local function initTargets()
     for k, v in pairs(GlobalState.HouseRobbery) do
         local off = Config.TierData[v.tier].offset
-        ps.boxTarget('mdhouseRob'..k, v.coords, {}, {
+        Bridge.Target.AddBoxZone('mdhouseRob'..k, v.coords, vector3(1.0, 1.0, 2.0), v.coords.w or 180.0, {
             {
                 label = Bridge.Language.Locale('Targets.robHouse'),
                 icon = Bridge.Language.Locale('Targets.robHouseIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
+
                     local copCheck = Bridge.Callback.Trigger('md-houserobberies:server:GetCoppers', k)
                     if copCheck < Config.TierData[v.tier].police then
                         Bridge.Notify.SendNotify(Bridge.Language.Locale('Error.notEnoughCops'), 'error')
@@ -136,7 +145,7 @@ local function initTargets()
 
                     PoliceCall(Config.TierData[v.tier].policeCallChance)
 
-                    if not ps.hasItem(Config.TierData[v.tier].breakInItem) then
+                    if not Bridge.Inventory.HasItem(Config.TierData[v.tier].breakInItem) then
                         Bridge.Notify.SendNotify(Bridge.Language.Locale('Error.dontHaveItem', Config.TierData[v.tier].breakInItem), 'error')
                         TriggerServerEvent('md-houseRobberies:server:busyState', k)
                         return
@@ -150,15 +159,24 @@ local function initTargets()
 
                     TriggerServerEvent('md-houseRobberies:server:spawnHouse', k)
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
-                    spawnHouse(v.tier, v.coords)
+                    spawnHouse(v.tier, v.coords, k)
                     spawnLoot(k)
                 end,
                 canInteract = function()
-                    if not GlobalState.HouseRobbery[k].spawned and ps.getJobName() ~= 'police' and not GlobalState.HouseRobbery[k].busy then
-                        return true
-                    else
+                    if not GlobalState.HouseRobbery[k] then
                         return false
                     end
+                    local jobName = Bridge.Framework.GetPlayerJob()
+                    if jobName == 'police' or jobName == 'ambulance' then
+                        return false
+                    end
+                    if GlobalState.HouseRobbery[k].busy then
+                        return false
+                    end
+                    if GlobalState.HouseRobbery[k].spawned then
+                        return false
+                    end
+                    return true
                 end,
             },
             {
@@ -172,9 +190,8 @@ local function initTargets()
                 canInteract = function()
                     if GlobalState.HouseRobbery[k].spawned then
                         return true
-                    else
-                        return false
                     end
+                    return false
                 end,
             },
             {
@@ -186,29 +203,18 @@ local function initTargets()
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
                 end,
                 canInteract = function()
-                    if GlobalState.HouseRobbery[k].spawned and ps.getJobType() == 'leo' and not GlobalState.HouseRobbery[k].busy then
-                        return true
-                    else
+                    if not GlobalState.HouseRobbery[k].spawned then
                         return false
                     end
+                    local job = Bridge.Framework.GetPlayerJob()
+                    if job ~= 'police' then
+                        return false
+                    end
+                    return true
                 end,
             },
-            {
-                label = Bridge.Language.Locale('Targets.smokeBomb'),
-                icon = Bridge.Language.Locale('Targets.smokeBombIcon'),
-                action = function()
-                    TriggerServerEvent('md-houseRobberies:server:smokeBomb', k)
-                end,
-                canInteract = function()
-                    if GlobalState.HouseRobbery[k].spawned and ps.getJobType() == 'leo' and not GlobalState.HouseRobbery[k].busy then
-                        return true
-                    else
-                        return false
-                    end
-                end,
-            }
         })
-        ps.boxTarget('mdHRexit'..k, vector3(v.coords.x + off.x, v.coords.y + off.y, v.coords.z + off.z - 145.0), {}, {
+        Bridge.Target.AddBoxZone('mdHRexit'..k, vector3(v.coords.x + off.x, v.coords.y + off.y, v.coords.z + off.z - 145.0), vector3(1.0, 1.0, 2.0), v.coords.w or 180.0, {
             {
                 label = Bridge.Language.Locale('Targets.leaveHouse'),
                 icon = Bridge.Language.Locale('Targets.leaveHouseIcon'),
@@ -230,7 +236,8 @@ end
 initTargets()
 
 RegisterNetEvent('md-houseRobberies:client:forceLeave', function(house)
-    if #(GetEntityCoords(PlayerPedId()) - vector3(GlobalState.HouseRobbery[house].coords.x, GlobalState.HouseRobbery[house].coords.y, GlobalState.HouseRobbery[house].coords.z - 145.0)) <= 30.0 then
+    local coords = vector3(GlobalState.HouseRobbery[house].coords.x, GlobalState.HouseRobbery[house].coords.y, GlobalState.HouseRobbery[house].coords.z - 145.0)
+    if #(GetEntityCoords(PlayerPedId()) - coords) <= 30.0 then
         SetEntityCoords(PlayerPedId(), GlobalState.HouseRobbery[house].coords)
     end
     for i = 1, #loot[house] do
@@ -247,19 +254,10 @@ RegisterNetEvent('md-houseRobberies:client:syncLoot', function(house, lootKey)
     end
 end)
 
-RegisterNetEvent('md-houseRobberies:client:smokeBomb', function(house)
-    local loc = vector3(GlobalState.HouseRobbery[house].coords.x, GlobalState.HouseRobbery[house].coords.y, GlobalState.HouseRobbery[house].coords.z - 145.0)
-    local dict = "scr_ba_bb"
-    ps.requestPTFX(dict, 10000)
-    SetPtfxAssetNextCall(dict)
-    local fx = StartParticleFxLoopedAtCoord('scr_ba_bb_plane_smoke_trail',loc.x + math.random(-2,2), loc.y + math.random(-2,2), loc.z, 0, 0, 0, 3.0, 0, 0,0)
-    StopParticleFxLooped(fx, 0)
-end)
-
 local peds = {}
 
 local function spawnFence()
-    local fence = Bridge.Callback.Trigger('md-houserobberies:server:GetFence')
+    local fence = GlobalState.MDHouseRobberyFence.fencePeds
     for k, v in pairs (fence) do
         requestModel(v.ped, 10000)
         peds[#peds+1] = CreatePed(4, v.ped, v.coords.x, v.coords.y, v.coords.z, v.coords.w, false, false)
@@ -272,15 +270,15 @@ local function spawnFence()
                 icon = Bridge.Language.Locale('Targets.sellLootIcon'),
                 distance = 2.0,
                 action = function()
-                    local itemList = Bridge.Callback.Trigger('md-houserobberies:server:getLootItems', k)
                     local menu = {}
-                    for item, values in pairs(itemList) do
-                        if ps.hasItem(item) then
+                    for item, values in pairs(GlobalState.MDHouseRobberyFence.fenceItems) do
+                        if Bridge.Inventory.HasItem(item) then
+                            local itemInfo = Bridge.Inventory.GetItemInfo(item)
                             menu[#menu+1] = {
-                                title = ps.getLabel(item),
-                                icon = ps.getImage(item),
+                                title = itemInfo.label,
+                                icon =  itemInfo.image,
                                 description = Bridge.Language.Locale('Info.currency') .. values.price,
-                                action = function()
+                                onSelect = function()
                                     TriggerServerEvent('md-houseRobberies:server:sellLoot', k, item)
                                 end
                             }
@@ -290,7 +288,11 @@ local function spawnFence()
                         Bridge.Notify.SendNotify(Bridge.Language.Locale('Error.dontHaveLoot'), 'error')
                         return
                     end
-                    ps.menu(Bridge.Language.Locale('Menu.fence'), Bridge.Language.Locale('Menu.fence'), menu)
+                    Bridge.Menu.Open({
+                        id='fenceMenu',
+                        title= Bridge.Language.Locale('Menu.fence'),
+                        options=menu
+                    })
                 end,
             }
         })
@@ -303,21 +305,20 @@ RegisterNetEvent('md-houseRobberies:client:fenceRobbery', function(loc)
     TaskTurnPedToFaceEntity(peds[loc], PlayerPedId(), 1.0)
     TaskAimGunAtEntity(peds[loc], PlayerPedId(), 5000, true)
     TaskTurnPedToFaceEntity(PlayerPedId(), peds[loc], 1.0)
-    ps.requestAnim('missminuteman_1ig_2', 10000)
+    Bridge.Anim.RequestDict('missminuteman_1ig_2', 10000)
     TaskPlayAnim(PlayerPedId(), 'missminuteman_1ig_2', 'handsup_base', 8.0, -8.0, -1, 49, 0, false, false, false)
     Wait(3000)
     ClearPedTasks(peds[loc])
     StopAnimTask(PlayerPedId(),'missminuteman_1ig_2', 'handsup_base', 1.0)
     ClearPedTasks(PlayerPedId())
-    ps.requestAnim('melee@pistol@streamed_fps', 10000)
+    Bridge.Anim.RequestDict('melee@pistol@streamed_fps', 10000)
     TaskPlayAnim(peds[loc], 'melee@pistol@streamed_fps', 'pistol_idle_whip', 8.0, -8.0, -1, 49, 0, false, false, false)
     Wait(500)
     StopAnimTask(peds[loc],'melee@pistol@streamed_fps', 'pistol_idle_whip', 1.0)
     ClearPedTasks(peds[loc])
     tele(Config.RobbedRandomLocs[math.random(1, #Config.RobbedRandomLocs)])
-    ps.requestAnim('switch@franklin@bed', 10000)
+    Bridge.Anim.RequestDict('switch@franklin@bed', 10000)
     TaskPlayAnim(PlayerPedId(), 'switch@franklin@bed', 'sleep_getup_rubeyes', 100.0, 1.0, -1, 8, -1, 0, 0, 0)
     Wait(4000)
     ClearPedTasks(PlayerPedId())
 end)
-

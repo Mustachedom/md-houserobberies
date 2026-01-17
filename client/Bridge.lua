@@ -102,3 +102,59 @@ function tele(coords)
 	Wait(1000)
 	DoScreenFadeIn(500)
 end
+
+
+if Config.Emotes == 'rp' then
+	function playEmote(emote)
+		return exports["rpemotes"]:EmoteCommandStart(emote)
+	end
+	function stopEmote()
+		return exports["rpemotes"]:EmoteCancel()
+	end
+end
+
+if Config.Emotes == 'dp' then
+	function playEmote(emote)
+		TriggerEvent('animations:client:EmoteCommandStart', {emote})
+	end
+	function stopEmote()
+		TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+	end
+end
+
+if Config.Emotes == 'scully' then
+	function playEmote(emote)
+		exports.scully_emotemenu:playEmoteByCommand(emote)
+	end
+	function stopEmote()
+		exports.scully_emotemenu:cancelEmote()
+	end
+end
+
+if Config.Emotes == 'custom' then
+	function playEmote(emote)
+		TriggerEvent('animations:client:EmoteCommandStart', {emote})
+	end
+	function stopEmote()
+		TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+	end
+end
+
+function progressbar(text, time, emote, cancel)
+	playEmote(emote)
+	if not cancel then
+		cancel =  {
+			move = true,
+			car = true,
+			combat = true
+		}
+	end
+	local success = Bridge.ProgressBar.Open({
+		duration = time,
+		label = text,
+		canCancel = true,
+		disable = cancel,
+	})
+	stopEmote()
+	return success
+end
