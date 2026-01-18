@@ -109,7 +109,7 @@ local function spawnPed(coords, tier)
     beATotalAsshole(ped)
 end
 
-local function spawnHouse(tier, coords, house)
+local function spawnHouse(tier, coords, house, bool)
     local loc = vector3(coords.x, coords.y, coords.z - 145.0)
     local houseData = Config.TierData[tier].export.func(loc)
 
@@ -119,9 +119,10 @@ local function spawnHouse(tier, coords, house)
             TriggerServerEvent('md-houseRobberies:server:houseClosed', house)
         end)
     end)
-
-    if Config.TierData[tier].ped.chance >= math.random(1,100) then
-        spawnPed(loc, tier)
+    if bool then
+        if Config.TierData[tier].ped.chance >= math.random(1,100) then
+            spawnPed(loc, tier)
+        end
     end
     return houseData
 end
@@ -159,7 +160,7 @@ local function initTargets()
 
                     TriggerServerEvent('md-houseRobberies:server:spawnHouse', k)
                     TriggerServerEvent('md-houseRobberies:server:busyState', k)
-                    spawnHouse(v.tier, v.coords, k)
+                    spawnHouse(v.tier, v.coords, k, true)
                     spawnLoot(k)
                 end,
                 canInteract = function()
@@ -184,7 +185,7 @@ local function initTargets()
                 icon = Bridge.Language.Locale('Targets.enterHomeIcon'),
                 action = function()
                     TriggerServerEvent('md-houseRobberies:server:enterHouse', k)
-                    SetEntityCoords(PlayerPedId(), vector3(v.coords.x + off.x, v.coords.y + off.y, v.coords.z + off.z - 145.0))
+                    spawnHouse(v.tier, v.coords, k, false)
                     spawnLoot(k)
                 end,
                 canInteract = function()

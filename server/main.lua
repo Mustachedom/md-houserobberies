@@ -61,9 +61,6 @@ local function removeHouse(house)
             Houses[house].loot[k].busy = false
         end
         GlobalState.HouseRobbery = Houses
-        for k, v in pairs(insideHouse[house]) do
-            TriggerClientEvent('md-houseRobberies:client:forceLeave', k, house)
-        end
         insideHouse[house] = {}
     end)
 end
