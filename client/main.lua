@@ -167,10 +167,18 @@ CreateThread(function()
                     canInteract = function()
                         if Config.Houses[k]['spawned'] == false  and QBCore.Functions.GetPlayerData().job.type ~= 'leo' then return true end end
                     
-                }, })
-                local loc = vector3(Config.Houses[k]['coords'].x  + Config.OffSet[Config.Houses[k]['tier']].x, Config.Houses[k]['coords'].y + Config.OffSet[Config.Houses[k]['tier']].y, Config.Houses[k]['coords'].z + Config.OffSet[Config.Houses[k]['tier']].z - 145 )
-                AddBoxZoneSingle('leavehouse'..k, loc, 
-                {name = 'leaverobbery', icon = "fas fa-sign-in-alt",label = "Leave Robbery House",action = function()   SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)   end,})
+                }, 
+            })
+            local loc = vector3(Config.Houses[k]['coords'].x  + Config.OffSet[Config.Houses[k]['tier']].x, Config.Houses[k]['coords'].y + Config.OffSet[Config.Houses[k]['tier']].y, Config.Houses[k]['coords'].z + Config.OffSet[Config.Houses[k]['tier']].z - 145 )
+            AddBoxZoneSingle('leavehouse'..k, loc, {   
+                name = 'leaverobbery', 
+                icon = "fas fa-sign-in-alt",
+                label = "Leave Robbery House",
+                action = function()
+                    SetEntityCoords(PlayerPedId(), Config.Houses[k].coords)
+                    TriggerEvent('qb-weathersync:client:EnableSync')
+                end,
+            })
 end
 end)
 
